@@ -73,11 +73,25 @@ class Searcher(object):
         items = [item for item in list_of_shows if item.found is False]
         return len(items) == 0
     
-    def make_hidden_char_names(self, hide_chars, episode):
-        """get variants that have hidden characters"""
-        temp_name = episode.show.show_name
-        show_words = temp_name.split(' ')
+def make_hidden_char_names(self, hide_chars, episode):
+    """get variants that have hidden characters"""
+    temp_name = episode #episode.show.show_name
+    show_words = temp_name.split(' ')
+    new_names = []
+
+    for char in hide_chars:
+        new_episode = ''
         for word in show_words:
-                for char in hide_chars:
+            new_episode += word.replace(char[0], char[1])
+        new_names.append(new_episode)
+    
+    return new_names
+
+
                     
-        
+bcs = 'Better Call Saul'
+p = 'Preacher'
+ns = 'Nonsense Sally Edge'
+hide_chars = [('e', '3'), ('l', '1'), ('o', '0')]
+
+names = make_hidden_char_names(hide_chars, bcs)
