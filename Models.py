@@ -44,7 +44,6 @@ class Episode(Base):
     parent_download_page = Column(String)
     download_time = Column(DateTime)
 
-
     def __str__(self):
         return "%s s%se%s" % (self.show.show_name, str(self.season_number).zfill(2), str(self.episode_number).zfill(2))
 
@@ -121,6 +120,7 @@ class ActionLog(Base):
                 s.delete(e)
         s.commit()
 
+
 class LinkIndex(Base):
     __tablename__ = "linkindex"
     id = Column(Integer, primary_key=True)
@@ -166,8 +166,6 @@ class Config(Base):
                 file_host_exists = True
                 break
         return file_host_exists
-
-
         # http://docs.sqlalchemy.org/en/rel_0_9/dialects/sqlite.html
 
 
