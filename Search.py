@@ -2,6 +2,9 @@ from Models import Config, ActionLog, Show, Episode
 import Models
 import os
 import time
+import datetime
+from urllib.parse import urlparse, urljoin
+import LinkInteraction
 
 
 class Search(object):
@@ -9,8 +12,9 @@ class Search(object):
         self.movie_types = ['movies', 'both']
         self.tv_types = ['tv', 'both']
         self.shows_to_download = self.get_episode_list()
+        self.db = None
 
-    def get_episode_list():
+    def get_episode_list(self):
         list_of_shows = []
         db = Models.connect()
         config = db.query(Config).first()
@@ -48,22 +52,51 @@ class Search(object):
 
     @staticmethod
     def is_completed(shows):
-        downloaded_shows = [for x in shows if not x.is_downloaded]
+        downloaded_shows = [x for x in shows if not x.is_downloaded]
         return len(downloaded_shows) == len(shows)
 
     def check_link(self, link, source):
-        link_text = link.text.lower()
+        # this checks the individual link to see if it matches the regex
+        # of a given episode (show name) and episode code.
+        link_text = link.text.lower().strip()
         if link.text != '':
             if source.media_type in self.movie_types:
-                if process_movie_link(db, link):  # get movies links
-                    return None
+                # check if this is a movie link (regex search)
+                LinkInteraction.process_movie_link(self.db, link)
+                return False
             if source.media_type in self.tv_types:  # search for all shows
                 if Search.is_completed():  # takes care of 'both' media type sources
-                    return None
+                    return False
                 else:
-                    for episode in [x for x in self.shows_to_download if not x.is_downloaded]:
+                    for episode in [x for x in self.shows_to_download if not x.is_downloaded and not x.is_found]:
+                        if episode.episode_in_link(link_text):
+                            episode.parent_download_page = link.parent
+                            episode.url_download_source = urljoin(source.domain, link.get('href'))
+                            episode.is_found = True
+                            ActionLog.log('"%s" found @ %s' % (episode, episode.url_download_source))
+                            return True
+                        else:
+                            return False
 
-                        # if show_searcher.search_me(link_text):
-                        #     show_searcher.link = urljoin(source.domain, link.get('href'))
-                        #     show_searcher.found = True
-                        #     ActionLog.log('"%s" found!' % show_searcher)
+    def open_links(self, browser, config, source):
+        for episode in [s for s in self.shows_to_download if not s.is_found]:
+            if not episode.is_found:
+                ActionLog.log("%s not found in soup" % str(episode))
+                continue
+            else:
+                tv_response = browser.get(episode.url_download_source)
+                if tv_response.status_code == 200:
+                    episode_soup = tv_response.soup
+                    episode_links = LinkInteraction.get_download_links(episode_soup, config, source.domain)
+                    if LinkInteraction.is_valid_links(episode_links, browser, episode):
+                        episode.is_found = True
+                        episode.download_links = ' | '.join(episode_links)
+                        LinkInteraction.process_tv_link(self.db, config, episode, episode_links)
+                    else:
+                        episode.is_found = False
+                        # TODO give a reason why the show isn't 'found' even though we did find it in the
+                        # previous section
+
+
+
+
