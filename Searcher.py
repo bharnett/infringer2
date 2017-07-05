@@ -7,7 +7,6 @@ import datetime
 hide_chars = ['e', 'l', 'o']
 space_chars = ['.',' ','_']
 
-
 class Searcher(object):
     """class for searching for an individual episode"""
     def __init__(self, episode_id, episode_code, link, directory, attempts=0):
@@ -17,7 +16,6 @@ class Searcher(object):
         self.found = False
         self.directory = directory
         self.retrieved = False
-        self.search_list = []
         self.attempts = attempts
         self.regex_name = ''
 
@@ -48,7 +46,7 @@ class Searcher(object):
             os.makedirs(show_dir)
             
         search_episode = Searcher(episode.id, episode_id_string, '', show_dir, episode.attempts)
-        search_episode.regex_name = make_show_regex(episode.show.show_name)
+        search_episode.regex_name = make_show_regex(edited_show_name)
 
         return search_episode
 
@@ -74,17 +72,34 @@ def make_show_regex(episode):
     for char in hide_chars:
         regex_name = regex_name.replace(char, '[a-zA-Z0-9]')
 
-    for char in space_chars:
-        regex_name = regex_name.replace(char, '[\s\.\\_]')
-    
-    for a in ['&', 'and']:
-        regex_name = regex_name.replace(a, '(and)&')
+    # for char in space_chars:
+    #     regex_name = regex_name.replace(char, '[\s\.\\_]')
+    #
+    # for a in ['&', 'and']:
+    #     regex_name = regex_name.replace(a, '(and)&')
 
     return regex_name
 
 
+def check_names(text):
+    text = text.lower()
+    regex = make_show_regex(bcs.lower())
+    id = 'S03E10'
+    id = id.lower()
+    if (id in text) and len(re.findall(regex, text)) > 0:
+        return True
+    else:
+        return False
+
+
+
+
+
+test = 'Pr3acher S02E02 720p 1080p WEB-DL DD5.1 H.264-RARBG'
+test2 = 'B3tter Cal1 Sau1 S03E10 720p 1080p WEB-DL DD5.1 H.264-RARBG'
 bcs = 'Better Call Saul'
-p = 'Preacher'
+p = 'Pr3acher (US)'
 ns = 'Nonsense Sally Edge'
 
 names = make_show_regex(bcs)
+print(check_names((test2)))

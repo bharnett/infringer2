@@ -8,6 +8,8 @@ import os
 import re
 import datetime
 
+hide_chars = ['e', 'l', 'o']
+space_chars = ['.',' ','_']
 
 Base = declarative_base()
 
@@ -19,11 +21,26 @@ class Show(Base):
     first_aired = Column(Date)
     is_active = Column(Boolean, default=True)
     banner = Column(String)
+    poster = Column(String)
+    thumb = Column(String)
+    background = Column(String)
     large_image = Column(String)
     show_directory = Column(String)
+    regex = Column(String)
 
     def __str__(self):
         return "%s - %s" % (self.show_name, self.show_id)
+
+    def make_regex(self):
+        for char in hide_chars:
+            regex_name = regex_name.replace(char, '[a-zA-Z0-9]')
+
+        # for char in space_chars:
+        #     regex_name = regex_name.replace(char, '[\s\.\\_]')
+        #
+        # for a in ['&', 'and']:
+        #     regex_name = regex_name.replace(a, '(and)&')
+        self.regex = regex_name
 
 
 class Episode(Base):
@@ -43,6 +60,8 @@ class Episode(Base):
     is_downloaded = Column(Boolean, default=False)
     parent_download_page = Column(String)
     download_time = Column(DateTime)
+    episode_image = Column(String)
+
 
     def __str__(self):
         return "%s s%se%s" % (self.show.show_name, str(self.season_number).zfill(2), str(self.episode_number).zfill(2))
