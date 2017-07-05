@@ -52,17 +52,18 @@ class Search(object):
         return len(downloaded_shows) == len(shows)
 
     def check_link(self, link, source):
+        link_text = link.text.lower()
         if link.text != '':
             if source.media_type in self.movie_types:
                 if process_movie_link(db, link):  # get movies links
-                    continue
+                    return None
             if source.media_type in self.tv_types:  # search for all shows
                 if Search.is_completed():  # takes care of 'both' media type sources
-                    continue
+                    return None
                 else:
-                    for show_searcher in [x for x in list_of_shows if not x.found and not x.retrieved]:
-                        link_text = link.text.lower()
-                        if show_searcher.search_me(link_text):
-                            show_searcher.link = urljoin(source.domain, link.get('href'))
-                            show_searcher.found = True
-                            ActionLog.log('"%s" found!' % show_searcher)
+                    for episode in [x for x in self.shows_to_download if not x.is_downloaded]:
+
+                        # if show_searcher.search_me(link_text):
+                        #     show_searcher.link = urljoin(source.domain, link.get('href'))
+                        #     show_searcher.found = True
+                        #     ActionLog.log('"%s" found!' % show_searcher)

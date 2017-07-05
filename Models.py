@@ -69,6 +69,16 @@ class Episode(Base):
     def get_episode_name(self):
         return self.episode_name.replace('<', '').replace('>', '')
 
+    def episode_in_link(self, link_text):
+        episode_id_string = 's%se%s' % (str(self.season_number).zfill(2),
+                                        str(self.episode_number).zfill(2))
+        episode_id_string = episode_id_string.lower()
+
+        if (episode_id_string in link_text) and len(re.findall(self.show.regex, link_text)) > 0:
+            return True
+        else:
+            return False
+
 
 class ScanURL(Base):
     __tablename__ = 'scanurl'
