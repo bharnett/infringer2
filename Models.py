@@ -1,6 +1,6 @@
 import urllib
 import cherrypy
-from sqlalchemy import Column, String, Integer, ForeignKey, Date, Boolean, DateTime, create_engine
+from sqlalchemy import Column, String, Integer, ForeignKey, Date, Boolean, DateTime, create_engine, Numeric
 from sqlalchemy.orm import relationship, backref, sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 from cherrypy.process import wspbus, plugins
@@ -66,6 +66,7 @@ class Episode(Base):
     download_links = Column(String)
     download_time = Column(DateTime)
     episode_image = Column(String)
+    last_updated = Column(DateTime)
 
 
     def __str__(self):
@@ -83,6 +84,16 @@ class Episode(Base):
             return True
         else:
             return False
+
+
+class AddableShow(Base):
+    __tablename__ = 'addableshow'
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    poster = Column(String)
+    overview = Column(String)
+    addable_type = Column(String)  #either 'popular' or 'premier'
+    first_aired = Column(Date)
 
 
 class ScanURL(Base):
@@ -108,6 +119,12 @@ class Movie(Base):
     name = Column(String)
     link_text = Column(String)
     status = Column(String, default='Not Retrieved')
+    title = Column(String)
+    tmdb_rating = Column(String)
+    poster = Column(String)
+    overview = Column(String)
+    actors = Column(String)
+    links = Column(String)
 
     def get_IMDB_link(self):
         release_date_list = re.findall('[\(]?[0-9]{4}[\)]?', self.name)

@@ -1,6 +1,8 @@
 from Models import Episode, Movie, ActionLog
 import re
 import datetime
+from urllib.parse import urlparse, urljoin
+import TvdbInteraction
 
 
 class FileLink(object):
@@ -129,6 +131,34 @@ def get_download_links(soup, config, domain):
                 return_links.append(p.link_text)
 
     return return_links
+
+
+def scan_movie_links(db, browser, source, config):
+    c = TvdbInteraction.Contentor()
+
+    for movie in db.query(Movie).all():
+        # only movies without a movie_link set
+        if len(movie.movieurls.all()) == 0:
+            movie_link = urljoin(source.domain, movie.link_text)
+            movie_response = browser.get(movie_link)
+            if movie_response.status_code == 200:
+                movie_soup = movie_response.soup
+                movie_links = get_download_links(movie_soup, config, source.domain, '1080p')
+                movie.links = ' '.join(movie_links)
+
+                if len(movie_links) == 0 or movie.name.strip() == '':
+                    db.query(Movie).filter(Movie.id == movie.id).delete()
+                else:
+                    tmdb_movie = c.get_movie_details(movie.name)
+                    movie.title = tmdb_movie.movie['title']
+                    movie.tmdb_rating = tmdb_movie.movie['vote_average']
+                    movie.poster = 'https://image.tmdb.org/t/p/w185' + tmdb_movie.movie['poster_path']
+                    movie.overview = tmdb_movie.movie['title']
+                    movie.actors = tmdb_movie.cast['title']
+                    movie.status = "Ready"
+
+                    ActionLog.log('"%s" added to downloadable movies' % movie.name)
+                db.commit()
 
 
 def write_crawljob_file(package_name, folder_name, link_text, crawljob_dir):

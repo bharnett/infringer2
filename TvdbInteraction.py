@@ -3,10 +3,13 @@ import requests
 import json
 import tmdbsimple
 import datetime
+import html
+import time
 
 
 class Contentor(object):
     """class for calling tvdb"""
+
     def __init__(self):
         self.tvdb_api_key = 'EFF4CBD618B5C756'
         self.tvdb_userkey = '3BBD3F7E1043129C'
@@ -19,7 +22,7 @@ class Contentor(object):
 
     def search_show(self, show_name):
         results = self.api.search(name=show_name)
-        returned_shows=[]
+        returned_shows = []
         for show in results:
             returned_shows.append(SearchResult(show))
         return returned_shows
@@ -33,7 +36,7 @@ class Contentor(object):
         endpoint = 'http://webservice.fanart.tv/v3/tv/%s?api_key=%s' % (show_id, self.fanart_api_key)
         fanart_request = requests.get(endpoint)
 
-        if (fanart_request.ok):
+        if fanart_request.ok:
             arts = json.loads(fanart_request.content.decode('latin'))
             return_arts = Artworks()
             return_arts.pop_arts(arts)
@@ -42,8 +45,8 @@ class Contentor(object):
         else:
             return None
 
-        # hit fanart.tv for more images and pass some class back to the database.
-        # get show poster, banner, thumb, season poster, season thumb, and background
+            # hit fanart.tv for more images and pass some class back to the database.
+            # get show poster, banner, thumb, season poster, season thumb, and background
 
     def get_season_artwork(self, show_id, season_number):
         arts = self.get_show_images(show_id)
@@ -59,24 +62,18 @@ class Contentor(object):
         else:
             return []
 
+    def get_movie_details(self, movie_text):
+        tmdb = tmdbsimple
+        tmdb.API_KEY = self.tmdb_api_key
+        search = tmdb.Search()
+        search_results = search.movie(query=html.escape(movie_text))
+        movie = search_results['results'][0]
+        cast = tmdb.Movies(movie['id']).credits()['cast']
+        cast_members = []
+        for member in cast[0:4]:
+            cast_members.append(member.name)
 
-        # epoch_time = str(last_update.timestamp()).split('.')[0]  # get epoch time without milliseconds
-        # updates = self.api.updates(epoch_time)
-        # for u in updates:
-        #     print(u)
-        # x = 'y'
-        # get updates from tvdb
-        # parse for series in the user's database
-        # add shows that don't exist, then update existing shows with the data based on id
-        # make sure to get updated show images too for new seasons
-    #
-    # def get_trending(self):
-    #     trakt.APPLICATION_ID = self.trakt_api_key
-    #     trakt.init()
-    #     x = 'y'
-    #
-    #     # use trakt tv api for this
-    #     # filter shows that are currently in the user's database so they don't show up.
+        return MovieDetails(movie, cast)
 
     def get_popular(self):
         tmdb = tmdbsimple
@@ -85,18 +82,20 @@ class Contentor(object):
         pop = tv.popular(language='en-US')
         total_pages = pop['total_pages'] + 1
         popular_list = []
-        if total_pages > 39:
-            total_pages = 39 # keep it under limit, we really don't need more than 40 pages of this stuff
+        if total_pages > 5:
+            total_pages = 5  # keep it under limit, we really don't need more than 40 pages of this stuff
 
         for i in range(2, total_pages):
             shows = pop['results']
             for show in shows:
-                if show['original_language'] == 'en':
+                air_date = datetime.datetime.strptime(show['first_air_date'], '%Y-%m-%d')
+                if show['original_language'] == 'en' and \
+                                air_date >= datetime.datetime.now() + datetime.timedelta(weeks=-624):
                     # add the show because it is in the future
                     popular_list.append(show)
             pop = tv.popular(language='en-US', page=i)
 
-        return popular_list
+        return popular_list, self.get_tvdb_ids(tmdb, popular_list)
 
     def get_upcoming_premiers(self):
         tmdb = tmdbsimple
@@ -114,12 +113,25 @@ class Contentor(object):
                     list_of_premiers.append(show)
             air = tv.airing_today(language='en-US', page=i)
 
-        return list_of_premiers
+        return list_of_premiers, self.get_tvdb_ids(tmdb, list_of_premiers)
         # filter shows that are currently in the user's database after data is returned
+
+    def get_tvdb_ids(self, tmdb, list):
+        tvdb_links = []
+        i = 5
+        for s in list:
+            if i == 5: #added in a sleep function for rate limiting on api
+                time.sleep(5)
+                i = 0
+            tvdb_id = tmdb.TV(s['id']).external_ids()['tvdb_id']
+            tvdb_links.append(tvdb_id)
+            i += 1
+        return tvdb_links
 
 
 class SearchResult(object):
     """container for search results"""
+
     def __init__(self, show):
         self.name = show.seriesName
         self.premier_date = show.firstAired
@@ -128,8 +140,19 @@ class SearchResult(object):
     def __str__(self):
         return '%s on %s at %s' % (self.name, self.network, self.premier_date)
 
+
+class MovieDetails(object):
+    def __init__(self, movie_response, cast_response):
+        self.movie = movie_response
+        self.cast = []
+
+        for member in cast_response[0:4]:
+            self.cast.append(member.name)
+
+
 class Artworks(object):
     """container for show & season artwork"""
+
     def __init__(self):
         self.background = ''
         self.show_poster = ''
@@ -152,9 +175,13 @@ class Artworks(object):
 # result = t.search_show('girl')
 # images = t.get_show_images(result[0].id)
 
-c = Contentor()
-s = c.get_show(273181)
-c.get_show_images(273181)
+# c = Contentor()
+# # s = c.get_show(273181)
+# # c.get_show_images(273181)
+# x = c.get_popular()
+# y = c.get_upcoming_premiers()
+#
+# c.get_movie_details('kong skull island')
 
 # tester = c.get_upcoming_premiers()
 
@@ -162,9 +189,4 @@ c.get_show_images(273181)
 
 # c.get_updates(time, [])
 
-#c.get_popular()
-
-
-
-
-
+# c.get_popular()

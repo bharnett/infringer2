@@ -15,6 +15,7 @@ from mako.template import Template
 from mako.lookup import TemplateLookup
 from webutils import AjaxResponse
 from apscheduler.schedulers.background import BackgroundScheduler
+import MediaInteraction
 
 template_dir = os.path.dirname(os.path.normpath(os.path.abspath(__file__))) + '/html'
 my_lookup = TemplateLookup(directories=[template_dir])
@@ -240,30 +241,10 @@ class Infringer(object):
         try:
             data = cherrypy.request.json
             series_id = data['seriesid']
-            t = tvdb_api.Tvdb()
-            s = t[series_id]
             # db = models.connect()
             if cherrypy.request.db.query(Show).filter(Show.show_id == series_id).first() is None:
                 # save new show to db
-                first_aired_date = datetime.strptime(s['firstaired'], "%Y-%m-%d")
-                new_show = Show(show_id=series_id, show_name=s['seriesname'], first_aired=first_aired_date,
-                                is_active=s.data['status'] == 'Continuing', banner=s['banner'])
-
-                if new_show.banner == None:
-                    new_show.banner = ''
-
-                new_show.make_regex()
-
-                # create folder based on show name:
-                new_show.show_directory = '/' + new_show.show_name.replace('.', '').strip()
-                phys_directory = cherrypy.request.db.query(Config).first().tv_parent_directory + new_show.show_directory
-                if not os.path.exists(phys_directory):
-                    os.makedirs(phys_directory)
-
-                cherrypy.request.db.add(new_show)
-                cherrypy.request.db.commit()
-                ActionLog.log('"%s" added.' % new_show.show_name)
-                Utils.add_episodes(series_id, t, cherrypy.request.db)
+                MediaInteraction.add_show(series_id, cherrypy.request.db)
             else:
                 status = 'duplicate'
                 # http://stackoverflow.com/questions/7753073/jquery-ajax-post-to-django-view

@@ -2,6 +2,7 @@ from Models import Show, Config, Episode, ActionLog, ScanURL
 import Models
 import Search
 import WebInteraction
+import LinkInteraction
 
 
 def search_sites():
@@ -41,6 +42,9 @@ def search_sites():
 
             # open links and get download links for TV
             search.open_links(browser, config, source)
+
+            if source.media_type in search.movie_types: #handles the movies pickd up to get their links
+                LinkInteraction.scan_movie_links(db, browser, source, config)
 
 if __name__ == "__main__":
     search_sites()
