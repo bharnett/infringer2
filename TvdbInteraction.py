@@ -24,6 +24,9 @@ class Contentor(object):
             returned_shows.append(SearchResult(show))
         return returned_shows
 
+    def get_show(self, show_id):
+        return self.api.series(show_id)
+
     def get_show_images(self, show_id):
         # this should only be done once, when the show is added.  Any other images
         # should be part of the update process
@@ -31,8 +34,11 @@ class Contentor(object):
         fanart_request = requests.get(endpoint)
 
         if (fanart_request.ok):
-            arts = json.loads(fanart_request.content)
-            return arts
+            arts = json.loads(fanart_request.content.decode('latin'))
+            return_arts = Artworks()
+            return_arts.pop_arts(arts)
+            return return_arts
+
         else:
             return None
 
@@ -122,7 +128,24 @@ class SearchResult(object):
     def __str__(self):
         return '%s on %s at %s' % (self.name, self.network, self.premier_date)
 
+class Artworks(object):
+    """container for show & season artwork"""
+    def __init__(self):
+        self.background = ''
+        self.show_poster = ''
+        self.show_thumb = ''
+        self.show_banner = ''
+        self.show_large = ''
+        self.seasons_posters = []
+        # self.seasons_thumbs = []
 
+    def pop_arts(self, art):
+        self.background = art['showbackground'][0] if len(art['showbackground']) > 0 else ''
+        self.show_poster = art['tvposter'][0] if len(art['tvposter']) > 0 else ''
+        self.show_thumb = art['tvthumb'][0] if len(art['tvthumb']) > 0 else ''
+        self.show_banner = art['tvbanner'][0] if len(art['tvbanner']) > 0 else ''
+        self.show_large = art['hdclearart'][0] if len(art['hdclearart']) > 0 else ''
+        self.seasons_posters = art['seasonposter']
 
 
 # t = tvdb()
@@ -130,6 +153,7 @@ class SearchResult(object):
 # images = t.get_show_images(result[0].id)
 
 c = Contentor()
+s = c.get_show(273181)
 c.get_show_images(273181)
 
 # tester = c.get_upcoming_premiers()

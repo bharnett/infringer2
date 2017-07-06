@@ -28,6 +28,7 @@ class Show(Base):
     show_directory = Column(String)
     regex = Column(String)
     last_updated = Column(DateTime, default=datetime.datetime.now())
+    overview = Column(String)
 
     def __str__(self):
         return "%s - %s" % (self.show_name, self.show_id)
