@@ -4,17 +4,17 @@ import Search
 import WebInteraction
 
 
-def search_sites(list_of_shows):
+def search_sites():
     # This is to search pages.  They can either be long pages like cardman's or search results
     # also this can be used to search a dynamic results page or
     db = Models.connect()
     config = db.query(Config).first()
-    search = Search()
+    search = Search.Search()
     search.j_downloader_check(config)
     search.db = db
 
     for source in db.query(ScanURL).order_by(ScanURL.priority).all():
-        tv_is_completed = search.is_completed(list_of_shows)
+        tv_is_completed = search.is_completed()
 
         if (tv_is_completed and source.media_type == 'tv') or source.media_type == 'search':
             # skip tv types list is completed
@@ -42,3 +42,5 @@ def search_sites(list_of_shows):
             # open links and get download links for TV
             search.open_links(browser, config, source)
 
+if __name__ == "__main__":
+    search_sites()

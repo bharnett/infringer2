@@ -27,12 +27,13 @@ class Show(Base):
     large_image = Column(String)
     show_directory = Column(String)
     regex = Column(String)
-    last_updated = Column(datetime, default=datetime.datetime.now())
+    last_updated = Column(DateTime, default=datetime.datetime.now())
 
     def __str__(self):
         return "%s - %s" % (self.show_name, self.show_id)
 
     def make_regex(self):
+        regex_name = self.show_name.lower()
         for char in hide_chars:
             regex_name = regex_name.replace(char, '[a-zA-Z0-9]')
 
@@ -64,6 +65,7 @@ class Episode(Base):
     download_links = Column(String)
     download_time = Column(DateTime)
     episode_image = Column(String)
+
 
     def __str__(self):
         return "%s s%se%s" % (self.show.show_name, str(self.season_number).zfill(2), str(self.episode_number).zfill(2))
@@ -174,7 +176,7 @@ class Config(Base):
     refresh_hour = Column(Integer, default=2)
     jd_link = Column(String, default='')
     jd_path = Column(String, default='')
-    last_update = Column(datetime, default=datetime.datetime.now())
+    last_update = Column(DateTime, default=datetime.datetime.now())
 
     @staticmethod
     def get_hours():

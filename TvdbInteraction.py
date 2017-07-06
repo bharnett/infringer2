@@ -1,10 +1,8 @@
 from tvdbrest.client import TVDB
-import pytvmaze
 import requests
 import json
 import tmdbsimple
 import datetime
-import trakt
 
 
 class Contentor(object):
@@ -15,7 +13,6 @@ class Contentor(object):
         self.tvdb_username = 'bharnett1825'
         self.api = TVDB(self.tvdb_username, self.tvdb_userkey, self.tvdb_api_key)
         self.api.login()
-        self.tvm = pytvmaze.TVMaze()
         self.fanart_api_key = 'bdb9e6a92d25c43e88a7ad36d835a715'
         self.tmdb_api_key = '79f408a7da4bdb446799cb45bbb43e7b'
         self.trakt_api_key = 'e9f4942e8fbd766b00017b445af15349ead0d483521fec6cd35af40256e8d744'
@@ -113,8 +110,6 @@ class Contentor(object):
 
         return list_of_premiers
         # filter shows that are currently in the user's database after data is returned
-
-
 
 
 class SearchResult(object):

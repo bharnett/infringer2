@@ -14,7 +14,9 @@ def source_login(source):
         username_index = 0
         password_index = 0
 
-        if source.domain in ['tehparadox.com', 'warez-bb.org', 'x264-bb.org']:
+        domain = source.domain.split('/')[2].replace('www.','')
+
+        if domain in ['tehparadox.com', 'warez-bb.org', 'x264-bb.org', 'adit-hd.com']:
             form_index = 0
             username_index = 0
             password_index = 0
