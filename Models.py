@@ -73,7 +73,7 @@ class Episode(Base):
         return "%s s%se%s" % (self.show.show_name, str(self.season_number).zfill(2), str(self.episode_number).zfill(2))
 
     def get_episode_name(self):
-        return self.episode_name.replace('<', '').replace('>', '')
+        return self.episode_name
 
     def episode_in_link(self, link_text):
         episode_id_string = 's%se%s' % (str(self.season_number).zfill(2),
@@ -126,18 +126,17 @@ class Movie(Base):
     actors = Column(String)
     links = Column(String)
 
-    def get_IMDB_link(self):
+    def get_name_and_year(self):
         release_date_list = re.findall('[\(]?[0-9]{4}[\)]?', self.name)
         # s = re.sub('[\(][0-9]{4}[\)]', '', self.name)
         s = self.name.replace('(', '|').replace('Part', '|').replace('Season', '|')
         s = s.split('|')[0].strip()
-        s = re.split('[\(]?[0-9]{4}[\)]?', s)[0].strip().replace(' ', '+')
         if len(release_date_list) > 0:
             release_date = release_date_list[0].replace('(', '').replace(')', '')
         else:
             release_date = ''
-        s = urllib.parse.quote_plus(s)
-        return 'http://www.omdbapi.com/?t=%s&y=%s&plot=short&r=json' % (s, release_date)
+
+        return s, release_date
 
 
 class MovieURL(Base):

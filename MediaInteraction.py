@@ -16,11 +16,11 @@ def add_show(show_id, db):
                     first_aired=series.firstAired,
                     is_active=series.status == 'Continuing',
                     overview=series.overview,
-                    banner=artwork.show_banner['url'],
-                    poster=artwork.show_poster['url'],
-                    thumb=artwork.show_thumb['url'],
-                    background=artwork.background['url'],
-                    large_image=artwork.show_large['url'])
+                    banner=artwork.show_banner,
+                    poster=artwork.show_poster,
+                    thumb=artwork.show_thumb,
+                    background=artwork.background,
+                    large_image=artwork.show_large)
 
     new_show.make_regex()
 
@@ -59,11 +59,11 @@ def add_episode(tvdb_episode, db_show, db, c=None, artwork=None):
         else:
             episode_retrieved = 'Retrieved'
 
-        if len(artwork.seasons_posters) >= tvdb_episode.airedSeason - 1:
+        if len(artwork.seasons_posters) > 0 and len(artwork.seasons_posters) >= tvdb_episode.airedSeason - 1:
             # get first season poster
-            episode_art = artwork.seasons_posters[tvdb_episode.airedSeason - 1]['url']
+            episode_art = artwork.seasons_posters[tvdb_episode.airedSeason - 1]
         else:
-            episode_art = artwork.show_poster.url
+            episode_art = artwork.show_poster
 
         new_episode = Episode(id=tvdb_episode.id,
                               season_number=tvdb_episode.airedSeason,
@@ -139,12 +139,12 @@ def create_addables(resp_and_ids, type, db):
 
 #preacher is 300472
 
-database = Models.connect()
-# show = database.query(Show).filter(Show.show_id == 300472).first()
-# if show is not None:
-#     database.delete(show)
-#     database.commit()
+# database = Models.connect()
+# # show = database.query(Show).filter(Show.show_id == 300472).first()
+# # if show is not None:
+# #     database.delete(show)
+# #     database.commit()
+# #
+# # add_show(300472, database)
 #
-# add_show(300472, database)
-
-add_addables(database)
+# add_addables(database)

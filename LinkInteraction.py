@@ -61,11 +61,7 @@ def process_movie_link(db, link):
         return False
 
 
-def get_download_links(soup, config, domain):
-    if config.hd_format in ['720p', '1080p']:
-        hd_format = config.hd_format
-    else:
-        hd_format = '720p'
+def get_download_links(soup, config, domain, hd_format='720p'):
 
     return_links = []
     episode_file_links = []
@@ -89,6 +85,11 @@ def get_download_links(soup, config, domain):
             all_links.append(c.text)
     elif 'x264-bb.com' in domain:
         code_elements = soup.select('.codemain pre')
+        for c in code_elements:
+            all_links.append(c.text)
+    elif 'adit-hd' in domain:
+        code_elements = soup.select('code')
+        if len(code_elements) == 0: return []
         for c in code_elements:
             all_links.append(c.text)
     else:
@@ -138,7 +139,7 @@ def scan_movie_links(db, browser, source, config):
 
     for movie in db.query(Movie).all():
         # only movies without a movie_link set
-        if len(movie.movieurls.all()) == 0:
+        if movie.links is None or movie.links.strip() == '':
             movie_link = urljoin(source.domain, movie.link_text)
             movie_response = browser.get(movie_link)
             if movie_response.status_code == 200:
@@ -149,12 +150,14 @@ def scan_movie_links(db, browser, source, config):
                 if len(movie_links) == 0 or movie.name.strip() == '':
                     db.query(Movie).filter(Movie.id == movie.id).delete()
                 else:
-                    tmdb_movie = c.get_movie_details(movie.name)
+                    search_details = movie.get_name_and_year()
+                    tmdb_movie = c.get_movie_details(search_details[0], search_details[1])
+#todo handle not found movies
                     movie.title = tmdb_movie.movie['title']
                     movie.tmdb_rating = tmdb_movie.movie['vote_average']
                     movie.poster = 'https://image.tmdb.org/t/p/w185' + tmdb_movie.movie['poster_path']
                     movie.overview = tmdb_movie.movie['title']
-                    movie.actors = tmdb_movie.cast['title']
+                    movie.actors = ', '.join(tmdb_movie.cast)
                     movie.status = "Ready"
 
                     ActionLog.log('"%s" added to downloadable movies' % movie.name)

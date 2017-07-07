@@ -62,16 +62,19 @@ class Contentor(object):
         else:
             return []
 
-    def get_movie_details(self, movie_text):
+    def get_movie_details(self, movie_text, year=''):
         tmdb = tmdbsimple
         tmdb.API_KEY = self.tmdb_api_key
         search = tmdb.Search()
-        search_results = search.movie(query=html.escape(movie_text))
-        movie = search_results['results'][0]
-        cast = tmdb.Movies(movie['id']).credits()['cast']
-        cast_members = []
-        for member in cast[0:4]:
-            cast_members.append(member.name)
+        search_results = search.movie(query=html.escape(movie_text), year=year)
+        if len(search_results) > 0:
+            movie = search_results['results'][0]
+            cast = tmdb.Movies(movie['id']).credits()['cast']
+        else:
+            return None
+        # cast_members = []
+        # for member in cast[0:4]:
+        #     cast_members.append(member['name'])
 
         return MovieDetails(movie, cast)
 
@@ -147,7 +150,7 @@ class MovieDetails(object):
         self.cast = []
 
         for member in cast_response[0:4]:
-            self.cast.append(member.name)
+            self.cast.append(member['name'])
 
 
 class Artworks(object):
@@ -163,13 +166,14 @@ class Artworks(object):
         # self.seasons_thumbs = []
 
     def pop_arts(self, art):
-        self.background = art['showbackground'][0] if len(art['showbackground']) > 0 else ''
-        self.show_poster = art['tvposter'][0] if len(art['tvposter']) > 0 else ''
-        self.show_thumb = art['tvthumb'][0] if len(art['tvthumb']) > 0 else ''
-        self.show_banner = art['tvbanner'][0] if len(art['tvbanner']) > 0 else ''
-        self.show_large = art['hdclearart'][0] if len(art['hdclearart']) > 0 else ''
-        self.seasons_posters = art['seasonposter']
-
+        self.background = art['showbackground'][0]['url'] if 'showbackground' in art.keys() else ''
+        self.show_poster = art['tvposter'][0]['url'] if 'tvposter' in art.keys() else ''
+        self.show_thumb = art['tvthumb'][0]['url'] if 'tvthumb' in art.keys() else ''
+        self.show_banner = art['tvbanner'][0]['url'] if 'tvbanner' in art.keys() else ''
+        self.show_large = art['hdclearart'][0]['url'] if 'hdclearart' in art.keys() else ''
+        if 'seasonposter' in art.keys():
+            for p in art['seasonposter']:
+                self.seasons_posters.append(p['url'])
 
 # t = tvdb()
 # result = t.search_show('girl')
