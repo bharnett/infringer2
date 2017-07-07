@@ -68,7 +68,6 @@ class Episode(Base):
     episode_image = Column(String)
     last_updated = Column(DateTime)
 
-
     def __str__(self):
         return "%s s%se%s" % (self.show.show_name, str(self.season_number).zfill(2), str(self.episode_number).zfill(2))
 
@@ -84,6 +83,16 @@ class Episode(Base):
             return True
         else:
             return False
+
+    def reset(self):
+        self.retrieved_on = None
+        self.is_downloaded = False
+        self.is_found = False
+        self.download_time = None
+        self.url_download_source = ''
+        self.parent_download_page = ''
+        self.download_links = ''
+        self.parent_download_page = ''
 
 
 class AddableShow(Base):

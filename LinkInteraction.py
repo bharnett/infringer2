@@ -18,6 +18,7 @@ def process_tv_link(db, config, episode, episode_links):
     episode.is_downloaded = True
     episode.status = 'Retrieved'
     episode.retrieved_on = datetime.date.today()
+    episode.download_time = datetime.datetime.now()
     db.commit()
     ActionLog.log('"%s\'s" .crawljob file created.' % str(episode))
 
@@ -152,15 +153,15 @@ def scan_movie_links(db, browser, source, config):
                 else:
                     search_details = movie.get_name_and_year()
                     tmdb_movie = c.get_movie_details(search_details[0], search_details[1])
-                    # TODO handle not found movies
                     if tmdb_movie is None:
-                        ActionLog.log('"%s" not added.  Found at %s', (movie.name, movie_link))
+                        na_message = '"%s" not added.  Found at %s'% (movie.name, movie_link)
+                        ActionLog.log(na_message)
                         continue
                     else:
                         movie.title = tmdb_movie.movie['title']
                         movie.tmdb_rating = tmdb_movie.movie['vote_average']
                         movie.poster = 'https://image.tmdb.org/t/p/w185' + tmdb_movie.movie['poster_path']
-                        movie.overview = tmdb_movie.movie['title']
+                        movie.overview = tmdb_movie.movie['overview']
                         movie.actors = ', '.join(tmdb_movie.cast)
                         movie.status = "Ready"
 

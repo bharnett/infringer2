@@ -16,6 +16,8 @@ from mako.lookup import TemplateLookup
 from webutils import AjaxResponse
 from apscheduler.schedulers.background import BackgroundScheduler
 import MediaInteraction
+import LinkInteraction
+import ViewBag
 
 template_dir = os.path.dirname(os.path.normpath(os.path.abspath(__file__))) + '/html'
 my_lookup = TemplateLookup(directories=[template_dir])
@@ -35,10 +37,17 @@ class Infringer(object):
                 Episode.status == 'Pending').order_by(Episode.air_date)[:25]
             index_shows = cherrypy.request.db.query(Show).order_by(Show.show_name)
             index_movies = cherrypy.request.db.query(Movie).filter(Movie.status == 'Ready').all()
-            downloaded_shows = cherrypy.request.db.query(Episode).filter(Episode.retrieved_on != None).order_by(
+            downloaded_shows = cherrypy.request.db.query(Episode).filter(Episode.retrieved_on is not None).order_by(
                 Episode.retrieved_on.desc())[:50]
             return index_template.render(shows=index_shows, movies=index_movies, upcoming=upcoming_episodes,
                                          downloaded=downloaded_shows, jd_link=config.jd_link)
+
+    @cherrypy.expose
+    def new_index(self):
+        new_index_template = my_lookup.get_template('new_index.html')
+        vb = ViewBag.ViewBag()
+        vb.populate_addables()
+        return new_index_template.render(vb=vb, jd_link=vb.jd_link)
 
     @cherrypy.expose
     def show(self, show_id):
@@ -57,14 +66,12 @@ class Infringer(object):
             data = cherrypy.request.json
             episode_id = data['episodeid']
             change_to_value = data['changeto']
-            if (change_to_value == 'search'):
-                new_status = LinkRetrieve.show_search(episode_id, cherrypy.request.db)
-                status = 'success' if new_status == 'Retrieved' else 'failed'
-            else:
-                change_to_value = change_to_value.title()
-                e = cherrypy.request.db.query(Episode).filter(Episode.id == episode_id).first()
-                e.status = change_to_value
-                cherrypy.request.db.commit()
+            change_to_value = change_to_value.title()
+            e = cherrypy.request.db.query(Episode).filter(Episode.id == episode_id).first()
+            e.status = change_to_value
+            if e.status == 'Pending':
+                e.reset()
+            cherrypy.request.db.commit()
         except Exception as ex:
             ActionLog.log(ex)
             status = 'error'
@@ -299,10 +306,7 @@ class Infringer(object):
                 if is_ignore:
                     m.status = 'Ignored'
                 else:
-                    jdownloader_string = ''
-                    for l in m.movieurls.all():
-                        jdownloader_string += l.url + ' '
-                    LinkRetrieve.write_crawljob_file(m.name, config.movies_directory, jdownloader_string,
+                    LinkInteraction.write_crawljob_file(m.title, config.movies_directory, m.links,
                                                      config.crawljob_directory)
                     ActionLog.log('"%s\'s" .crawljob file created.' % m.name)
                     m.status = 'Retrieved'
@@ -313,7 +317,6 @@ class Infringer(object):
             ar.message = ex
 
         return ar.to_JSON()
-
 
     @cherrypy.expose
     @cherrypy.tools.json_in()

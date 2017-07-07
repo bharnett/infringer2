@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Infringer</title>
+    <%include file="base.html"/>
+    <style type="text/css">
+         #search-group {
+            margin-top: -21px;
+        }
+        #tv-section {
+            min-height: 50%;
+            max-height: 50%;
+
+        }
+
+        .tv-episode {
+            max-height:200px;
+        }
+
+        #movie-section{
+            min-height:50%;
+            max-height:50%;
+        }
+
+
+
+    </style>
+
+</head>
+<body>
+<%include file="nav.html"/>
+<div id="search-group">
+    <div class="input-group input-group-lg">
+        <input type="search" class="form-control" id="txt_showSearch" placeholder="Search for a show">
+        <span class="input-group-btn">
+                <button id="search-button" class="btn btn-primary" type="button">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                </button>
+            <!--<a href="${vb.jd_link}" id="jdownloader-button" class="btn btn-info" type="button">-->
+            <!--<i class="fa fa-cloud-download" aria-hidden="true"></i>-->
+            <!--</a>-->
+            </span>
+    </div>
+</div>
+<div class="container-fluid">
+
+<div class="row" id="tv-section">
+    <div class="col-md-9">
+                <h3>TV This Week</h3>
+        <hr>
+        <table class="table">
+            <thead>
+            <tr>
+                % for d in vb.dates:
+                <th>${d.strftime("%b %d")}</th>
+                % endfor
+            </tr>
+            </thead>
+            <tbody>
+
+            <tr>
+                % for s in vb.this_week:
+
+                <td>
+                    <a href="#" class="tv-thumb">
+                        <img class="img-responsive tv-episode" src="${s.episode_image}" alt="${s.show.show_name}">
+                    </a>
+                </td>
+                % endfor
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-3">
+
+    </div>
+</div>
+<div class="row" id="movie-section">
+    <div class="col-md-9">
+        <h3>Movies</h3>
+        <hr>
+        <table class="table table-hover table-condensed">
+            <tbody>
+            % for m in vb.movies:
+            <tr>
+                <td><a href="#" class="movie-link" data-movie-rating="${m.tmdb_rating}"
+                       data-movie-overview="${m.tmdb_rating}" data-movie-poster="${m.poster}"
+                       data-movie-actors="${m.actors}">${m.title}</a></td>
+                <td>
+                    <button type="button" class="btn btn-xs btn-success btn-movie"
+                            data-movie_ignore="false"
+                            data-movie_id="${m.id}">
+                        <i class="fa fa-download" aria-hidden="true"></i></span>
+                        Download
+                    </button>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-xs btn-danger btn-movie"
+                            data-movie_ignore="true"
+                            data-movie_id="${m.id}">
+                        <i class="fa fa-ban" aria-hidden="true"></i> Ignore
+                    </button>
+                </td>
+            </tr>
+            % endfor
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+</body>
+</html>
