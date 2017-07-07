@@ -8,19 +8,21 @@ import LinkInteraction
 
 
 class Search(object):
-    def __init__(self):
+    def __init__(self, db=None):
         self.movie_types = ['movies', 'both']
         self.tv_types = ['tv', 'both']
         self.shows_to_download = []
-        self.db = None
+        if db is None:
+            database = Models.connect()
+            self.db = database
+        else:
+            self.db = db
         self.get_episode_list()
 
     def get_episode_list(self):
         list_of_shows = []
-        db = Models.connect()
-        config = db.query(Config).first()
 
-        for s in db.query(Show).filter(Show.is_active).all():
+        for s in self.db.query(Show).filter(Show.is_active).all():
             episodes = s.episodes.filter(Episode.air_date <= datetime.date.today() - datetime.timedelta(days=1)).filter(
                 Episode.status == 'Pending').all()
 
@@ -32,8 +34,9 @@ class Search(object):
         else:
             all_tv = 'no shows'
 
+        self.db.commit()
+
         ActionLog.log('Searching for: %s.' % all_tv)
-        db.commit()
 
         self.shows_to_download = list_of_shows
 
@@ -73,11 +76,11 @@ class Search(object):
                             episode.parent_download_page = source.url
                             episode.url_download_source = urljoin(source.domain, link.get('href'))
                             episode.is_found = True
-                            ActionLog.log('"%s" found @ %s' % (episode, episode.url_download_source))
+                            # ActionLog.log('"%s" found @ %s' % (episode, episode.url_download_source))
                             return episode.is_found
 
     def open_links(self, browser, config, source):
-        for episode in [s for s in self.shows_to_download if not s.is_found]:
+        for episode in [s for s in self.shows_to_download if not s.is_downloaded]:
             if not episode.is_found:
                 ActionLog.log("%s not found in soup" % str(episode))
                 continue

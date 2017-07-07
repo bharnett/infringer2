@@ -10,9 +10,8 @@ def search_sites():
     # also this can be used to search a dynamic results page or
     db = Models.connect()
     config = db.query(Config).first()
-    search = Search.Search()
+    search = Search.Search(db)
     search.j_downloader_check(config)
-    search.db = db
 
     for source in db.query(ScanURL).order_by(ScanURL.priority).all():
         tv_is_completed = search.is_completed()

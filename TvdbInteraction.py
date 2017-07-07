@@ -67,7 +67,7 @@ class Contentor(object):
         tmdb.API_KEY = self.tmdb_api_key
         search = tmdb.Search()
         search_results = search.movie(query=html.escape(movie_text), year=year)
-        if len(search_results) > 0:
+        if search_results['total_results'] > 0:
             movie = search_results['results'][0]
             cast = tmdb.Movies(movie['id']).credits()['cast']
         else:

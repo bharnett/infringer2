@@ -13,13 +13,13 @@ class FileLink(object):
 
 
 def process_tv_link(db, config, episode, episode_links):
-    write_crawljob_file(str(episode), episode.show.directory, ' '.join(episode_links),
-                        config.crawljob_directory)
-    ActionLog.log('"%s\'s" .crawljob file created.' % str(episode))
+    save_directory = config.tv_parent_directory + episode.show.show_directory
+    write_crawljob_file(str(episode), save_directory, ' '.join(episode_links), config.crawljob_directory)
     episode.is_downloaded = True
     episode.status = 'Retrieved'
     episode.retrieved_on = datetime.date.today()
     db.commit()
+    ActionLog.log('"%s\'s" .crawljob file created.' % str(episode))
 
 
 def is_valid_links(episode_links, browser, episode):
@@ -152,15 +152,19 @@ def scan_movie_links(db, browser, source, config):
                 else:
                     search_details = movie.get_name_and_year()
                     tmdb_movie = c.get_movie_details(search_details[0], search_details[1])
-#todo handle not found movies
-                    movie.title = tmdb_movie.movie['title']
-                    movie.tmdb_rating = tmdb_movie.movie['vote_average']
-                    movie.poster = 'https://image.tmdb.org/t/p/w185' + tmdb_movie.movie['poster_path']
-                    movie.overview = tmdb_movie.movie['title']
-                    movie.actors = ', '.join(tmdb_movie.cast)
-                    movie.status = "Ready"
+                    # TODO handle not found movies
+                    if tmdb_movie is None:
+                        ActionLog.log('"%s" not added.  Found at %s', (movie.name, movie_link))
+                        continue
+                    else:
+                        movie.title = tmdb_movie.movie['title']
+                        movie.tmdb_rating = tmdb_movie.movie['vote_average']
+                        movie.poster = 'https://image.tmdb.org/t/p/w185' + tmdb_movie.movie['poster_path']
+                        movie.overview = tmdb_movie.movie['title']
+                        movie.actors = ', '.join(tmdb_movie.cast)
+                        movie.status = "Ready"
 
-                    ActionLog.log('"%s" added to downloadable movies' % movie.name)
+                        ActionLog.log('"%s" added to downloadable movies' % movie.name)
                 db.commit()
 
 
