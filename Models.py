@@ -125,6 +125,7 @@ class ScanURL(Base):
 class Movie(Base):
     __tablename__ = 'movie'
     id = Column(Integer, primary_key=True)
+    tmdb_id = Column(Integer)
     name = Column(String)
     link_text = Column(String)
     status = Column(String, default='Not Retrieved')

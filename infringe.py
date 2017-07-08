@@ -18,6 +18,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import MediaInteraction
 import LinkInteraction
 import ViewBag
+from mako import exceptions
 
 template_dir = os.path.dirname(os.path.normpath(os.path.abspath(__file__))) + '/html'
 my_lookup = TemplateLookup(directories=[template_dir])
@@ -44,10 +45,10 @@ class Infringer(object):
 
     @cherrypy.expose
     def new_index(self):
-        new_index_template = my_lookup.get_template('new_index.html')
-        vb = ViewBag.ViewBag()
-        vb.populate_addables()
-        return new_index_template.render(vb=vb, jd_link=vb.jd_link)
+            new_index_template = my_lookup.get_template('new_index.html')
+            vb = ViewBag.ViewBag()
+            vb.populate_addables()
+            return new_index_template.render(vb=vb, jd_link=vb.jd_link)
 
     @cherrypy.expose
     def show(self, show_id):
@@ -312,7 +313,7 @@ class Infringer(object):
                     m.status = 'Retrieved'
                 cherrypy.request.db.commit()
         except Exception as ex:
-            ActionLog.log('error - ' + ex)
+            ActionLog.log('error - ' + str(ex))
             ar.status = 'error'
             ar.message = ex
 

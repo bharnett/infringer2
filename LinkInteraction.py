@@ -158,6 +158,7 @@ def scan_movie_links(db, browser, source, config):
                         ActionLog.log(na_message)
                         continue
                     else:
+                        movie.tmdb_id = tmdb_movie.movie['id']
                         movie.title = tmdb_movie.movie['title']
                         movie.tmdb_rating = tmdb_movie.movie['vote_average']
                         movie.poster = 'https://image.tmdb.org/t/p/w185' + tmdb_movie.movie['poster_path']

@@ -14,7 +14,7 @@
 
         }
 
-        .tv-episode {
+        .tv-thumb {
             max-height:200px;
         }
 
@@ -22,6 +22,80 @@
             min-height:50%;
             max-height:50%;
         }
+
+        #movie-section #ignore-all-button {
+            opacity:0.0;
+            transition: opacity 1s ease-in-out;
+            -moz-transition: opacity 1s ease-in-out;
+            -webkit-transition: opacity 1s ease-in-out;
+        }
+
+        #movie-section:hover #ignore-all-button{
+            opacity:1.0;
+            transition: opacity .55s ease-in-out;
+            -moz-transition: opacity .55s ease-in-out;
+            -webkit-transition: opacity .55s ease-in-out;
+        }
+
+        .movie-row .movie-column p {
+            color: #4e5d6c;
+            transition: color .55s ease-in-out;
+            -moz-transition: color .55s ease-in-out;
+            -webkit-transition: color .55s ease-in-out;
+        }
+
+        .movie-row:hover .movie-column p {
+            color: #ebebeb;
+            transition: color .55s ease-in-out;
+            -moz-transition: color .55s ease-in-out;
+            -webkit-transition: color .55s ease-in-out;
+        }
+
+        <!--.striped-columns tbody td:nth-of-type(odd),-->
+        <!--.striped-columns thead th:nth-of-type(odd)-->
+        <!--{-->
+	        <!--background:#4e5d6c;-->
+        <!--}-->
+
+        .tv-table{
+            table-layout: fixed;
+
+        }
+        .tv-table th{
+            border:none;
+        }
+
+        .movie-thumb{
+            max-height:100px;
+        }
+
+        .movie-column {
+            max-height: 100px;
+        }
+
+        .movie-column p {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+        .movie-column h5{
+            margin-top: 0px;
+        }
+
+        .movie-column .rating {
+            margin-top: 27px;
+        }
+
+        .tmdb-image img {
+            max-height: 30px;
+
+        }
+        .tmdb-image {
+            margin-top: 5px;
+        }
+
+
 
 
 
@@ -44,71 +118,103 @@
     </div>
 </div>
 <div class="container-fluid">
+    <div class="row" id="tv-section">
+        <div class="col-md-9">
+            <%
+            dates = '(%s - %s)' % (vb.dates[0].strftime("%b %d"), vb.dates[6].strftime("%b %d"))
+            %>
+            <div class="page-header">
+                <h3>TV This Week
+                    <small> ${dates}</small>
+                    <small> </small>
+                </h3>
+            </div>
+            <table class="tv-table table">
+                <thead>
+                <tr>
+                    % for d in vb.dates:
+                    <th>
+                        <h5>${d.strftime("%A")}
+                            <small> - ${d.strftime("%b %d")}</small>
+                        </h5>
 
-<div class="row" id="tv-section">
-    <div class="col-md-9">
-                <h3>TV This Week</h3>
-        <hr>
-        <table class="table">
-            <thead>
-            <tr>
-                % for d in vb.dates:
-                <th>${d.strftime("%b %d")}</th>
-                % endfor
-            </tr>
-            </thead>
-            <tbody>
+                        <!--<span class="day-header">${d.strftime("%A")}</span>-->
+                        <!--<span class="date-header">${d.strftime("%b %d")}</span>-->
 
-            <tr>
-                % for s in vb.this_week:
+                    </th>
+                    % endfor
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    % for d in vb.dates:
+                    <td>
+                        % for s in [x for x in vb.this_week if x.air_date == d]:
+                        <p>${str(s)}</p>
+                        % endfor
+                    </td>
+                    % endfor
+                </tr>
+                </tbody>
+            </table>
 
-                <td>
-                    <a href="#" class="tv-thumb">
-                        <img class="img-responsive tv-episode" src="${s.episode_image}" alt="${s.show.show_name}">
-                    </a>
-                </td>
-                % endfor
-            </tr>
+        </div>
+        <div class="col-md-3">
 
-            </tbody>
-        </table>
+        </div>
     </div>
-    <div class="col-md-3">
+    <div class="row">
+        <div class="col-md-9" id="movie-section">
+            <h3>Movies
+                % if vb.movies:
+                <a id="ignore-all-button" class="btn btn-sm btn-warning" href="#" title="Removes all movies from your view" data-toggle="tooltip">
+                    <i class="fa fa-thumbs-o-down" aria-hidden="true"></i> Ignore All Movie</a>
 
-    </div>
-</div>
-<div class="row" id="movie-section">
-    <div class="col-md-9">
-        <h3>Movies</h3>
-        <hr>
-        <table class="table table-hover table-condensed">
-            <tbody>
+                <a href="https://www.themoviedb.org" target="_blank" class="pull-right tmdb-image"><img src="/static/tmdb.png" alt="Powered by TMDB"></a></h3>
+                % endif
+            <hr>
             % for m in vb.movies:
-            <tr>
-                <td><a href="#" class="movie-link" data-movie-rating="${m.tmdb_rating}"
-                       data-movie-overview="${m.tmdb_rating}" data-movie-poster="${m.poster}"
-                       data-movie-actors="${m.actors}">${m.title}</a></td>
-                <td>
-                    <button type="button" class="btn btn-xs btn-success btn-movie"
-                            data-movie_ignore="false"
-                            data-movie_id="${m.id}">
-                        <i class="fa fa-download" aria-hidden="true"></i></span>
-                        Download
-                    </button>
-                </td>
-                <td>
-                    <button type="button" class="btn btn-xs btn-danger btn-movie"
-                            data-movie_ignore="true"
-                            data-movie_id="${m.id}">
-                        <i class="fa fa-ban" aria-hidden="true"></i> Ignore
-                    </button>
-                </td>
-            </tr>
+                <div class="row movie-row">
+                    <div class="col-md-1">
+                        <img class="thumbnail movie-thumb" alt="${m.title}" src="${m.poster}">
+                    </div>
+                    <div class="col-md-6 movie-column">
+                        <h5><a href="${'https://www.themoviedb.org/movie/' + str(m.tmdb_id)}" target="_blank" class="movie-link" data-movie-id="${m.id}" data-movie-rating="${m.tmdb_rating}"
+                           data-movie-overview="${m.tmdb_rating}" data-movie-poster="${m.poster}"
+                           data-movie-actors="${m.actors}">${m.title}</a> </h5>
+                        <p class="movie-description">${m.overview}</p>
+                    </div>
+                    <div class="col-md-5 movie-column">
+                        <%
+                            rating = float(m.tmdb_rating)
+
+                            if rating > 7:
+                                rating_class = 'success'
+                            elif rating > 5.5:
+                                rating_class = 'warning'
+                            elif rating == 0:
+                                rating = 'No Reviews!'
+                                rating_class = 'info'
+                            else:
+                                rating_class = 'danger'
+
+                            rating_class = 'label label-' + rating_class
+                        %>
+
+                        <p class="rating"><strong>Rating: </strong><span class="${rating_class}">${rating}</span></p>
+                        <p><strong>Cast: </strong>${m.actors}</p>
+                    </div>
+                </div>
             % endfor
-            </tbody>
-        </table>
+        </div>
     </div>
-</div>
 </div>
 </body>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+
+
+</script>
 </html>
