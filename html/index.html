@@ -255,7 +255,6 @@
     </div>
 
 </div>
-</body>
 <script type="text/javascript">
     $(document).ready(function () {
         $("#txt_showSearch").keypress(function (e) {
@@ -283,9 +282,12 @@
                         $.each(results, function (i, val) {
                             $('#results_table tbody').append('<tr></tr>');
                             var row = $('#results_table tr:last');
-                            $(row).append('<td>' + val.seriesname + '</td>');
-                            $(row).append('<td>' + val.firstaired + '</td>');
+                            $(row).append('<td>' + val.name + '</td>');
+                            $(row).append('<td>' + val.premier_date + '</td>');
                             $(row).append('<td>' + val.network + '</td>');
+                            <!--$(row).append('<td>' + val.seriesname + '</td>');-->
+                            <!--$(row).append('<td>' + val.firstaired + '</td>');-->
+                            <!--$(row).append('<td>' + val.network + '</td>');-->
                             $(row).append('<td><button type="button" class="btn btn-info btn-xs" data-seriesid="' + val.seriesid + '">Add</button></td>');
 
                         });
@@ -449,4 +451,5 @@
 
 
 </script>
+</body>
 </html>

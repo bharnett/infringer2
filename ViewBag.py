@@ -13,6 +13,7 @@ class ViewBag(object):
         self.db = Models.connect()
         self.jd_link = ''
         self.dates =[]
+        self.config = None;
 
     def populate_addables(self):
         self.premiers = self.db.query(AddableShow).filter(AddableShow.addable_type == 'premier').all()
@@ -28,9 +29,9 @@ class ViewBag(object):
         self.dates = dates
         #for the movies
         self.movies = self.db.query(Movie).filter(Movie.status == 'Ready').all()
+        self.config = self.db.query(Config).first()
 
-        config = self.db.query(Config).first()
-        self.jd_link = config.jd_link
+        self.jd_link = self.config.jd_link
 
 # vb = ViewBag()
 # vb.populate_addables()

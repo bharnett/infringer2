@@ -229,6 +229,11 @@ class Config(Base):
         return file_host_exists
         # http://docs.sqlalchemy.org/en/rel_0_9/dialects/sqlite.html
 
+    def refresh_day_of_week(self):
+        d = {'sun':'Sunday','mon':'Monday','tue':'Tuesday','wed':'Wednesday','thu':'Thursday','fri':'Friday','sat':'Saturday'}
+
+        return d[self.refresh_day]
+
 
 def connect():
     data_file = os.path.normpath(os.path.abspath(__file__))

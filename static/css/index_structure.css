@@ -1,0 +1,91 @@
+/*this is just section and layouts html,*/
+html,
+body {
+    height: 100%;
+}
+
+.container-fluid {
+    height: 90%
+}
+
+.index-row-top {
+    height: 40%;
+}
+
+.index-row-bottom {
+    height: 60%;
+}
+
+.row-section {
+    height: 100%
+}
+
+.row-scroll-section {
+    max-height: 80%;
+    overflow-y: scroll;
+}
+
+/*specifics around elements & margins */
+
+#search-group {
+    margin-top: -21px;
+}
+
+.tv-table {
+    table-layout: fixed;
+}
+
+.tv-table th {
+    border: none;
+}
+
+.tv-table th {
+    border-bottom: 1px solid #596a7b !important;
+}
+
+.tv-table td {
+    background: rgba(78, 93, 108, .5);
+    border: 1px solid #596a7b !important;
+}
+
+.tv-table td div {
+    min-height: 100px;
+}
+
+
+/* movie section */
+.movie-thumb {
+    max-height: 100px;
+}
+
+.movie-column {
+    max-height: 100px;
+}
+
+.movie-column p {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.movie-column h5 {
+    margin-top: 0px;
+}
+
+.movie-column .rating {
+    margin-top: 27px;
+}
+
+.tmdb-image img {
+    max-height: 30px;
+}
+
+.tmdb-image {
+    margin-top: 5px;
+}
+
+.pb {
+    curosor: pointer;
+}
+

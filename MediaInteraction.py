@@ -59,10 +59,13 @@ def add_episode(tvdb_episode, db_show, db, c=None, artwork=None):
         else:
             episode_retrieved = 'Retrieved'
 
-        if len(artwork.seasons_posters) > 0 and len(artwork.seasons_posters) >= tvdb_episode.airedSeason - 1:
-            # get first season poster
-            episode_art = artwork.seasons_posters[tvdb_episode.airedSeason - 1]
-        else:
+        try:
+            if len(artwork.seasons_posters) > 0 and len(artwork.seasons_posters) >= tvdb_episode.airedSeason - 1:
+                # get first season poster
+                episode_art = artwork.seasons_posters[tvdb_episode.airedSeason - 1]
+            else:
+                episode_art = artwork.show_poster
+        except:
             episode_art = artwork.show_poster
 
         new_episode = Episode(id=tvdb_episode.id,
@@ -102,13 +105,18 @@ def update_episodes(tvdb_episodes, db_show, db, c=None):
     db.commit()
 
 
-def update_all():
+def update_all(database=None):
+    if database is None:
+        db = Models.connect()
+    else:
+        db = database
     c = TvdbInteraction.Contentor()
     db = Models.connect()
     shows = db.query(Show).all()
     for s in shows:
         series = c.api.series(s.show_id)
         update_episodes(series.episodes(), s, db, c)
+    add_addables(db)
 
 
 def add_addables(db):
@@ -126,15 +134,20 @@ def add_addables(db):
 
 
 def create_addables(resp_and_ids, type, db):
+    resp = resp_and_ids[0]
+    ids = resp_and_ids[1]
     for i in range(len(resp_and_ids[0])):
-        tmdb_show = resp_and_ids[0][i]
-        db_show = AddableShow(name=tmdb_show['name'],
-                              poster='https://image.tmdb.org/t/p/w185' + tmdb_show['poster_path'],
-                              overview=tmdb_show['overview'],
-                              addable_type=type,
-                              first_aired=datetime.datetime.strptime(tmdb_show['first_air_date'], '%Y-%m-%d'),
-                              id=resp_and_ids[1][i])
-        db.add(db_show)
+        if ids[i] == 0:
+            continue
+        else:
+            tmdb_show = resp[i]
+            db_show = AddableShow(name=tmdb_show['name'],
+                                  poster='https://image.tmdb.org/t/p/w185' + tmdb_show['poster_path'],
+                                  overview=tmdb_show['overview'],
+                                  addable_type=type,
+                                  first_aired=datetime.datetime.strptime(tmdb_show['first_air_date'], '%Y-%m-%d'),
+                                  id=ids[i])
+            db.add(db_show)
 
 
 #preacher is 300472

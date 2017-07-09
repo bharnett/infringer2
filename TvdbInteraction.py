@@ -121,12 +121,15 @@ class Contentor(object):
 
     def get_tvdb_ids(self, tmdb, list):
         tvdb_links = []
-        i = 5
+        i = 30
         for s in list:
-            if i == 5: #added in a sleep function for rate limiting on api
+            if i == 30: #added in a sleep function for rate limiting on api
                 time.sleep(5)
                 i = 0
             tvdb_id = tmdb.TV(s['id']).external_ids()['tvdb_id']
+            if tvdb_id is None:
+                tvdb_id = 0
+
             tvdb_links.append(tvdb_id)
             i += 1
         return tvdb_links
@@ -136,9 +139,10 @@ class SearchResult(object):
     """container for search results"""
 
     def __init__(self, show):
+        self.id = show.id
         self.name = show.seriesName
-        self.premier_date = show.firstAired
-        self.network = show.network  # TODO handle blanks/empty values
+        self.premier_date = None if show.firstAired is None else show.firstAired.strftime('%Y-%m-%d')
+        self.network = show.network if show.network.strip() != '' else 'NA'
 
     def __str__(self):
         return '%s on %s at %s' % (self.name, self.network, self.premier_date)

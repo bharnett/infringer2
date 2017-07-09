@@ -16,9 +16,10 @@ from mako.lookup import TemplateLookup
 from webutils import AjaxResponse
 from apscheduler.schedulers.background import BackgroundScheduler
 import MediaInteraction
+import TvdbInteraction
 import LinkInteraction
 import ViewBag
-from mako import exceptions
+import jsonpickle
 
 template_dir = os.path.dirname(os.path.normpath(os.path.abspath(__file__))) + '/html'
 my_lookup = TemplateLookup(directories=[template_dir])
@@ -232,13 +233,15 @@ class Infringer(object):
     @cherrypy.tools.json_out()
     def search(self, show_search):
         try:
-            t = tvdb_api.Tvdb()
-            search_results = t.search(show_search)
+            c = TvdbInteraction.Contentor()
+            search_results = c.search_show(show_search)
+            #t = tvdb_api.Tvdb()
+            #search_results_old = t.search(show_search)
             ActionLog.log('Search for "%s".' % show_search)
         except Exception as ex:
             search_results = "{error: %s}" % Exception
 
-        return json.dumps(search_results)
+        return jsonpickle.encode(search_results) # json.dumps(search_results)
 
 
     @cherrypy.expose
@@ -248,7 +251,7 @@ class Infringer(object):
         status = 'success'
         try:
             data = cherrypy.request.json
-            series_id = data['seriesid']
+            series_id = data['series_id']
             # db = models.connect()
             if cherrypy.request.db.query(Show).filter(Show.show_id == series_id).first() is None:
                 # save new show to db
@@ -276,7 +279,7 @@ class Infringer(object):
             is_scan = data['isscan']
 
             if is_scan:
-                LinkRetrieve.search_sites()
+                LinkRetrieve.search_sites(cherrypy.request.db)
 
             if is_show_refresh:
                 Utils.update_all()

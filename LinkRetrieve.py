@@ -5,10 +5,12 @@ import WebInteraction
 import LinkInteraction
 
 
-def search_sites():
+def search_sites(db=None):
     # This is to search pages.  They can either be long pages like cardman's or search results
     # also this can be used to search a dynamic results page or
-    db = Models.connect()
+    if db is None:
+        db = Models.connect()
+
     config = db.query(Config).first()
     search = Search.Search(db)
     search.j_downloader_check(config)
@@ -46,4 +48,5 @@ def search_sites():
                 LinkInteraction.scan_movie_links(db, browser, source, config)
 
 if __name__ == "__main__":
-    search_sites()
+    database = Models.connect()
+    search_sites(database)

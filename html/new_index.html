@@ -4,152 +4,22 @@
     <meta charset="UTF-8">
     <title>Infringer</title>
     <%include file="base.html"/>
-    <style type="text/css">
-         #search-group {
-            margin-top: -21px;
-        }
-        #tv-section {
-            min-height: 50%;
-            max-height: 50%;
-
-        }
-
-        .tv-thumb {
-            max-height:200px;
-        }
-
-        #movie-section{
-            min-height:50%;
-            max-height:50%;
-        }
-
-        #movie-section #ignore-all-button{
-            opacity:0.0;
-            transition: opacity .55s ease-in-out;
-            -moz-transition: opacity .55s ease-in-out;
-            -webkit-transition: opacity .55s ease-in-out;
-        }
-
-        #movie-section:hover #ignore-all-button{
-            opacity:1.0;
-            transition: opacity .55s ease-in-out;
-            -moz-transition: opacity .55s ease-in-out;
-            -webkit-transition: opacity .55s ease-in-out;
-        }
-
-        .movie-row .movie-column .movie-action {
-            opacity:0.0;
-            transition: opacity .55s ease-in-out;
-            -moz-transition: opacity .55s ease-in-out;
-            -webkit-transition: opacity .55s ease-in-out;
-        }
-
-        .movie-row:hover .movie-column .movie-action {
-            opacity:1.0;
-            transition: opacity .55s ease-in-out;
-            -moz-transition: opacity .55s ease-in-out;
-            -webkit-transition: opacity .55s ease-in-out;
-        }
-
-        .movie-row .movie-column p {
-            color: #4e5d6c;
-            transition: color .55s ease-in-out;
-            -moz-transition: color .55s ease-in-out;
-            -webkit-transition: color .55s ease-in-out;
-        }
-
-        .movie-row:hover .movie-column p {
-            color: #ebebeb;
-            transition: color .55s ease-in-out;
-            -moz-transition: color .55s ease-in-out;
-            -webkit-transition: color .55s ease-in-out;
-        }
-        
-        .movie-row .movie-column .label {
-            opacity: .1;
-            transition: opacity .55s ease-in-out;
-            -moz-transition: opacity .55s ease-in-out;
-            -webkit-transition: opacity .55s ease-in-out;
-        }
-
-        .movie-row:hover .movie-column .label {
-            opacity: 1.0;
-            transition: opacity .55s ease-in-out;
-            -moz-transition: opacity .55s ease-in-out;
-            -webkit-transition: opacity .55s ease-in-out;
-        }
-
-
-        .tv-table{
-            table-layout: fixed;
-
-        }
-        .tv-table th{
-            border:none;
-        }
-
-        .movie-thumb{
-            max-height:100px;
-        }
-
-        .movie-column {
-            max-height: 100px;
-        }
-
-        .movie-column p {
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-        }
-        .movie-column h5{
-            margin-top: 0px;
-        }
-
-        .movie-column .rating {
-            margin-top: 27px;
-        }
-
-        .tmdb-image img {
-            max-height: 30px;
-
-        }
-        .tmdb-image {
-            margin-top: 5px;
-        }
-
-        .pb
-        {
-            curosor:pointer;
-        }
-
-
-        .tv-table th {
-            border-bottom: 1px solid #596a7b !important;
-        }
-        .tv-table td {
-            background: rgba(78,93,108, .5);
-            border: 1px solid #596a7b !important;
-        }
-
-        .tv-table td div {
-            min-height: 100px;
-        }
-
-
-
-
-    </style>
+    <link rel="stylesheet" href="/static/css/index_structure.css">
+    <link rel="stylesheet" href="/static/css/index_transitions.css">
+    <script type="text/javascript" src="/static/js/search_and_add.js"></script>
 
 </head>
 <body>
 <%include file="nav.html"/>
+<%include file="add_modal.html"/>
 <div id="search-group">
     <div class="input-group input-group-lg">
-        <input type="search" class="form-control" id="txt_showSearch" placeholder="Search for a show">
+        <input type="search" class="form-control" id="show-search-input" placeholder="Search for a show">
         <span class="input-group-btn">
                 <button id="search-button" class="btn btn-primary" type="button">
                     <i class="fa fa-search" aria-hidden="true"></i>
+                    <i class="fa fa-spinner fa-spin" style="display:none;" aria-hidden="true"></i>
+
                 </button>
             <!--<a href="${vb.jd_link}" id="jdownloader-button" class="btn btn-info" type="button">-->
             <!--<i class="fa fa-cloud-download" aria-hidden="true"></i>-->
@@ -158,114 +28,170 @@
     </div>
 </div>
 <div class="container-fluid">
-    <div class="row" id="tv-section">
-        <div class="col-md-9">
+    <div class="row index-row-top">
+        <div class="col-md-9 row-section" id="tv-section">
             <%
             dates = '(%s - %s)' % (vb.dates[0].strftime("%b %d"), vb.dates[6].strftime("%b %d"))
             %>
-            <div class="page-header">
-                <h3>TV This Week
-                    <small> ${dates}</small>
-                    <small></small>
-                </h3>
+            <div>
+                <h3>TV This Week</h3>
+                <hr>
             </div>
-            <table class="tv-table table">
-                <thead>
-                <tr>
-                    % for d in vb.dates:
-                    <th>
-                        <h5>${d.strftime("%A")}
-                            <small> - ${d.strftime("%b %d")}</small>
-                        </h5>
+            <div class="row-scroll-section">
+                <table class="tv-table table">
+                    <thead>
+                    <tr>
+                        % for d in vb.dates:
+                        <th>
+                            <h5>${d.strftime("%A")}
+                                <small> - ${d.strftime("%b %d")}</small>
+                            </h5>
 
-                        <!--<span class="day-header">${d.strftime("%A")}</span>-->
-                        <!--<span class="date-header">${d.strftime("%b %d")}</span>-->
+                            <!--<span class="day-header">${d.strftime("%A")}</span>-->
+                            <!--<span class="date-header">${d.strftime("%b %d")}</span>-->
 
-                    </th>
-                    % endfor
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    % for d in vb.dates:
-                    <td>
-                        <div>
-                            % for s in [x for x in vb.this_week if x.air_date == d]:
-                            <p>${str(s)}</p>
-                            % endfor
-                        </div>
+                        </th>
+                        % endfor
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        % for d in vb.dates:
+                        <td>
+                            <div>
+                                % for s in [x for x in vb.this_week if x.air_date == d]:
+                                <p>${str(s)}</p>
+                                % endfor
+                            </div>
 
-                    </td>
-                    % endfor
-                </tr>
+                        </td>
+                        % endfor
+                    </tr>
 
-                </tbody>
-            </table>
-
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="col-md-3">
-
+        <div class="col-md-3 row-section addable-section" id="premier-section">
+            <div>
+                <h4 style="margin-top:29px;">New TV Premiers</h4>
+                <hr>
+            </div>
+            <div class="row-scroll-section">
+                % if len(vb.premiers) > 0:
+                <ul class="list-group">
+                    % for p in vb.premiers:
+                    <li class="list-group-item">
+                    <span class="badge">
+                        <a href="#" title="Add ${p.name}">
+                            <i class="fa fa-add"></i>
+                        </a>
+                    </span>
+                        <a href="#">${p.name}</a>
+                    </li>
+                    % endfor
+                </ul>
+                % else:
+                <blockquote>
+                    <p>There are no new TV premiers in the next seven days :(</p>
+                    <small>This will be refreshed automatically on ${vb.config.refresh_day_of_week()}.</small>
+                </blockquote>
+                % endif
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-9" id="movie-section">
-            <h3>Movies
-                % if vb.movies:
-                <a id="ignore-all-button" class="btn btn-sm btn-warning" href="#"
-                   title="Removes all movies from your view" data-toggle="tooltip">
-                    <!--<i class="fa fa-remove" aria-hidden="true"></i> -->
-                    Ignore All Movies</a>
+    <div class="row index-row-bottom">
+        <div class="col-md-9 row-section" id="movie-section">
+            <div>
+                <h3>Movies
+                    % if vb.movies:
+                    <a id="ignore-all-button" class="btn btn-sm btn-warning" href="#"
+                       title="Removes all movies from your view" data-toggle="tooltip">
+                        <!--<i class="fa fa-remove" aria-hidden="true"></i> -->
+                        Ignore All Movies</a>
 
-                <a href="https://www.themoviedb.org" target="_blank" class="pull-right tmdb-image"><img
-                        style="opacity:.75;" src="/static/tmdb.png" alt="Powered by TMDB"></a></h3>
-            % endif
-            <hr>
-            % for m in vb.movies:
-            <div class="row movie-row">
-                <div class="col-md-1">
-                    <img class="thumbnail movie-thumb" alt="${m.title}" src="${m.poster}">
-                </div>
-                <div class="col-md-6 movie-column">
-                    <h5>
-                        <a href="${'https://www.themoviedb.org/movie/' + str(m.tmdb_id)}" target="_blank"
-                           class="movie-link pb" data-movie-id="${m.id}" data-movie-rating="${m.tmdb_rating}"
-                           data-movie-overview="${m.tmdb_rating}" data-movie-poster="${m.poster}"
-                           data-movie-actors="${m.actors}">${m.title}</a>
-                        <div class="movie-action" style="display:inline;">
-                            |
-                            <a title="Download ${m.title}" data-toggle="tooltip" href="#">
-                                <i class="fa fa-download" aria-hidden="true"></i>
-                            </a>
-
-                            <a title="Remove ${m.title}" data-toggle="tooltip" href="#">
-                                <i class="fa fa-trash" aria-hidden="true"></i>
-                            </a>
-                        </div>
-                    </h5>
-                    <p class="movie-description">${m.overview}</p>
-                </div>
-                <div class="col-md-5 movie-column">
-                    <%
-                        rating = float(m.tmdb_rating)
-
-                        if rating > 7:
-                            rating_class = 'success'
-                        elif rating > 5.5:
-                            rating_class = 'warning'
-                        elif rating == 0:
-                            rating = 'No Reviews!'
-                            rating_class = 'info'
-                        else:
-                            rating_class = 'danger'
-
-                        rating_class = 'label label-' + rating_class
-                    %>
-
-                    <p class="rating"><strong>Rating: </strong><span class="${rating_class}">${rating}</span></p>
-                    <p><strong>Cast: </strong>${m.actors}</p>
-                </div>
+                    <!--<a href="https://www.themoviedb.org" target="_blank" class="pull-right tmdb-image"><img-->
+                            <!--style="opacity:.75;" src="/static/tmdb.png" alt="Powered by TMDB"></a>-->
+                </h3>
+                % endif
+                <hr>
             </div>
-            % endfor
+            <div class="row-scroll-section">
+                % for m in vb.movies:
+                <div class="row movie-row">
+                    <div class="col-md-1">
+                        <img class="thumbnail movie-thumb" alt="${m.title}" src="${m.poster}">
+                    </div>
+                    <div class="col-md-6 movie-column">
+                        <h5>
+                            <a href="${'https://www.themoviedb.org/movie/' + str(m.tmdb_id)}" target="_blank"
+                               class="movie-link pb" data-movie-id="${m.id}" data-movie-rating="${m.tmdb_rating}"
+                               data-movie-overview="${m.tmdb_rating}" data-movie-poster="${m.poster}"
+                               data-movie-actors="${m.actors}">${m.title}</a>
+                            <div class="movie-action" style="display:inline;">
+                                |
+                                <a title="Download ${m.title}" data-toggle="tooltip" href="#">
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                </a>
+
+                                <a title="Remove ${m.title}" data-toggle="tooltip" href="#">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        </h5>
+                        <p class="movie-description">${m.overview}</p>
+                    </div>
+                    <div class="col-md-5 movie-column">
+                        <%
+                            rating = float(m.tmdb_rating)
+
+                            if rating > 7:
+                                rating_class = 'success'
+                            elif rating > 5.5:
+                                rating_class = 'warning'
+                            elif rating == 0:
+                                rating = 'No Reviews!'
+                                rating_class = 'info'
+                            else:
+                                rating_class = 'danger'
+
+                            rating_class = 'label label-' + rating_class
+                        %>
+
+                        <p class="rating"><strong>Rating: </strong><span class="${rating_class}">${rating}</span></p>
+                        <p><strong>Cast: </strong>${m.actors}</p>
+                    </div>
+                </div>
+                % endfor
+
+            </div>
+        </div>
+        <div class="col-md-3 row-section addable-section" id="popular-section">
+            <div>
+                <h4 style="margin-top:33px;">Popular TV</h4>
+                <hr>
+            </div>
+            % if len(vb.popular):
+            <div class="row-scroll-section">
+                <ul class="list-group">
+                    % for p in vb.popular:
+                    <li class="list-group-item">
+                    <span class="badge">
+                        <a href="#" title="Add ${p.name}">
+                            <i class="fa fa-add"></i>
+                        </a>
+                    </span>
+                        <a href="#">${p.name}</a>
+                    </li>
+                    % endfor
+                </ul>
+            </div>
+            % else:
+            <blockquote>
+                <p>There are no popular TV shows in your database.</p>
+                <small>This will be refreshed automatically on ${vb.config.refresh_day_of_week()}.</small>
+            </blockquote>
+            % endif
         </div>
     </div>
 </div>
@@ -273,6 +199,7 @@
 <script type="text/javascript">
     $(document).ready(function(){
         $('[data-toggle="tooltip"]').tooltip()
+        HandleSearchAndAdd();
     });
 
 
