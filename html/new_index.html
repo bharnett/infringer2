@@ -23,14 +23,28 @@
             max-height:50%;
         }
 
-        #movie-section #ignore-all-button {
+        #movie-section #ignore-all-button{
             opacity:0.0;
-            transition: opacity 1s ease-in-out;
-            -moz-transition: opacity 1s ease-in-out;
-            -webkit-transition: opacity 1s ease-in-out;
+            transition: opacity .55s ease-in-out;
+            -moz-transition: opacity .55s ease-in-out;
+            -webkit-transition: opacity .55s ease-in-out;
         }
 
         #movie-section:hover #ignore-all-button{
+            opacity:1.0;
+            transition: opacity .55s ease-in-out;
+            -moz-transition: opacity .55s ease-in-out;
+            -webkit-transition: opacity .55s ease-in-out;
+        }
+
+        .movie-row .movie-column i{
+            opacity:0.0;
+            transition: opacity .55s ease-in-out;
+            -moz-transition: opacity .55s ease-in-out;
+            -webkit-transition: opacity .55s ease-in-out;
+        }
+
+        .movie-row:hover .movie-column i{
             opacity:1.0;
             transition: opacity .55s ease-in-out;
             -moz-transition: opacity .55s ease-in-out;
@@ -50,6 +64,22 @@
             -moz-transition: color .55s ease-in-out;
             -webkit-transition: color .55s ease-in-out;
         }
+        
+        .movie-row .movie-column .label {
+            opacity: .1;
+            transition: opacity .55s ease-in-out;
+            -moz-transition: opacity .55s ease-in-out;
+            -webkit-transition: opacity .55s ease-in-out;
+        }
+
+        .movie-row:hover .movie-column .label {
+            opacity: 1.0;
+            transition: opacity .55s ease-in-out;
+            -moz-transition: opacity .55s ease-in-out;
+            -webkit-transition: opacity .55s ease-in-out;
+        }
+        
+        
 
         <!--.striped-columns tbody td:nth-of-type(odd),-->
         <!--.striped-columns thead th:nth-of-type(odd)-->
@@ -95,8 +125,23 @@
             margin-top: 5px;
         }
 
+        .pb
+        {
+            curosor:pointer;
+        }
 
 
+        .tv-table th {
+            border-bottom: 1px solid #596a7b !important;
+        }
+        .tv-table td {
+            background: rgba(78,93,108, .5);
+            border: 1px solid #596a7b !important;
+        }
+
+        .tv-table td div {
+            min-height: 100px;
+        }
 
 
     </style>
@@ -149,12 +194,16 @@
                 <tr>
                     % for d in vb.dates:
                     <td>
+                        <div>
                         % for s in [x for x in vb.this_week if x.air_date == d]:
                         <p>${str(s)}</p>
                         % endfor
+                        </div>
+
                     </td>
                     % endfor
                 </tr>
+
                 </tbody>
             </table>
 
@@ -170,7 +219,7 @@
                 <a id="ignore-all-button" class="btn btn-sm btn-warning" href="#" title="Removes all movies from your view" data-toggle="tooltip">
                     <i class="fa fa-thumbs-o-down" aria-hidden="true"></i> Ignore All Movie</a>
 
-                <a href="https://www.themoviedb.org" target="_blank" class="pull-right tmdb-image"><img src="/static/tmdb.png" alt="Powered by TMDB"></a></h3>
+                <a href="https://www.themoviedb.org" target="_blank" class="pull-right tmdb-image"><img style="opacity:.75;" src="/static/tmdb.png" alt="Powered by TMDB"></a></h3>
                 % endif
             <hr>
             % for m in vb.movies:
@@ -179,9 +228,12 @@
                         <img class="thumbnail movie-thumb" alt="${m.title}" src="${m.poster}">
                     </div>
                     <div class="col-md-6 movie-column">
-                        <h5><a href="${'https://www.themoviedb.org/movie/' + str(m.tmdb_id)}" target="_blank" class="movie-link" data-movie-id="${m.id}" data-movie-rating="${m.tmdb_rating}"
+                        <h5>
+                            <a href="${'https://www.themoviedb.org/movie/' + str(m.tmdb_id)}" target="_blank" class="movie-link pb" data-movie-id="${m.id}" data-movie-rating="${m.tmdb_rating}"
                            data-movie-overview="${m.tmdb_rating}" data-movie-poster="${m.poster}"
-                           data-movie-actors="${m.actors}">${m.title}</a> </h5>
+                           data-movie-actors="${m.actors}">${m.title}</a>
+                            <a href="#"><i class="fa fa-download" aria-hidden="true"></i></a>
+                        </h5>
                         <p class="movie-description">${m.overview}</p>
                     </div>
                     <div class="col-md-5 movie-column">
