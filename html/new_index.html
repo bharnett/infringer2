@@ -37,14 +37,14 @@
             -webkit-transition: opacity .55s ease-in-out;
         }
 
-        .movie-row .movie-column i{
+        .movie-row .movie-column .movie-action {
             opacity:0.0;
             transition: opacity .55s ease-in-out;
             -moz-transition: opacity .55s ease-in-out;
             -webkit-transition: opacity .55s ease-in-out;
         }
 
-        .movie-row:hover .movie-column i{
+        .movie-row:hover .movie-column .movie-action {
             opacity:1.0;
             transition: opacity .55s ease-in-out;
             -moz-transition: opacity .55s ease-in-out;
@@ -78,14 +78,7 @@
             -moz-transition: opacity .55s ease-in-out;
             -webkit-transition: opacity .55s ease-in-out;
         }
-        
-        
 
-        <!--.striped-columns tbody td:nth-of-type(odd),-->
-        <!--.striped-columns thead th:nth-of-type(odd)-->
-        <!--{-->
-	        <!--background:#4e5d6c;-->
-        <!--}-->
 
         .tv-table{
             table-layout: fixed;
@@ -144,6 +137,8 @@
         }
 
 
+
+
     </style>
 
 </head>
@@ -171,7 +166,7 @@
             <div class="page-header">
                 <h3>TV This Week
                     <small> ${dates}</small>
-                    <small> </small>
+                    <small></small>
                 </h3>
             </div>
             <table class="tv-table table">
@@ -195,9 +190,9 @@
                     % for d in vb.dates:
                     <td>
                         <div>
-                        % for s in [x for x in vb.this_week if x.air_date == d]:
-                        <p>${str(s)}</p>
-                        % endfor
+                            % for s in [x for x in vb.this_week if x.air_date == d]:
+                            <p>${str(s)}</p>
+                            % endfor
                         </div>
 
                     </td>
@@ -216,47 +211,60 @@
         <div class="col-md-9" id="movie-section">
             <h3>Movies
                 % if vb.movies:
-                <a id="ignore-all-button" class="btn btn-sm btn-warning" href="#" title="Removes all movies from your view" data-toggle="tooltip">
-                    <i class="fa fa-thumbs-o-down" aria-hidden="true"></i> Ignore All Movie</a>
+                <a id="ignore-all-button" class="btn btn-sm btn-warning" href="#"
+                   title="Removes all movies from your view" data-toggle="tooltip">
+                    <!--<i class="fa fa-remove" aria-hidden="true"></i> -->
+                    Ignore All Movies</a>
 
-                <a href="https://www.themoviedb.org" target="_blank" class="pull-right tmdb-image"><img style="opacity:.75;" src="/static/tmdb.png" alt="Powered by TMDB"></a></h3>
-                % endif
+                <a href="https://www.themoviedb.org" target="_blank" class="pull-right tmdb-image"><img
+                        style="opacity:.75;" src="/static/tmdb.png" alt="Powered by TMDB"></a></h3>
+            % endif
             <hr>
             % for m in vb.movies:
-                <div class="row movie-row">
-                    <div class="col-md-1">
-                        <img class="thumbnail movie-thumb" alt="${m.title}" src="${m.poster}">
-                    </div>
-                    <div class="col-md-6 movie-column">
-                        <h5>
-                            <a href="${'https://www.themoviedb.org/movie/' + str(m.tmdb_id)}" target="_blank" class="movie-link pb" data-movie-id="${m.id}" data-movie-rating="${m.tmdb_rating}"
+            <div class="row movie-row">
+                <div class="col-md-1">
+                    <img class="thumbnail movie-thumb" alt="${m.title}" src="${m.poster}">
+                </div>
+                <div class="col-md-6 movie-column">
+                    <h5>
+                        <a href="${'https://www.themoviedb.org/movie/' + str(m.tmdb_id)}" target="_blank"
+                           class="movie-link pb" data-movie-id="${m.id}" data-movie-rating="${m.tmdb_rating}"
                            data-movie-overview="${m.tmdb_rating}" data-movie-poster="${m.poster}"
                            data-movie-actors="${m.actors}">${m.title}</a>
-                            <a href="#"><i class="fa fa-download" aria-hidden="true"></i></a>
-                        </h5>
-                        <p class="movie-description">${m.overview}</p>
-                    </div>
-                    <div class="col-md-5 movie-column">
-                        <%
-                            rating = float(m.tmdb_rating)
+                        <div class="movie-action" style="display:inline;">
+                            |
+                            <a title="Download ${m.title}" data-toggle="tooltip" href="#">
+                                <i class="fa fa-download" aria-hidden="true"></i>
+                            </a>
 
-                            if rating > 7:
-                                rating_class = 'success'
-                            elif rating > 5.5:
-                                rating_class = 'warning'
-                            elif rating == 0:
-                                rating = 'No Reviews!'
-                                rating_class = 'info'
-                            else:
-                                rating_class = 'danger'
-
-                            rating_class = 'label label-' + rating_class
-                        %>
-
-                        <p class="rating"><strong>Rating: </strong><span class="${rating_class}">${rating}</span></p>
-                        <p><strong>Cast: </strong>${m.actors}</p>
-                    </div>
+                            <a title="Remove ${m.title}" data-toggle="tooltip" href="#">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </h5>
+                    <p class="movie-description">${m.overview}</p>
                 </div>
+                <div class="col-md-5 movie-column">
+                    <%
+                        rating = float(m.tmdb_rating)
+
+                        if rating > 7:
+                            rating_class = 'success'
+                        elif rating > 5.5:
+                            rating_class = 'warning'
+                        elif rating == 0:
+                            rating = 'No Reviews!'
+                            rating_class = 'info'
+                        else:
+                            rating_class = 'danger'
+
+                        rating_class = 'label label-' + rating_class
+                    %>
+
+                    <p class="rating"><strong>Rating: </strong><span class="${rating_class}">${rating}</span></p>
+                    <p><strong>Cast: </strong>${m.actors}</p>
+                </div>
+            </div>
             % endfor
         </div>
     </div>
@@ -266,6 +274,8 @@
     $(document).ready(function(){
         $('[data-toggle="tooltip"]').tooltip()
     });
+
+
 
 
 </script>
