@@ -19,16 +19,23 @@ class Contentor(object):
         self.fanart_api_key = 'bdb9e6a92d25c43e88a7ad36d835a715'
         self.tmdb_api_key = '79f408a7da4bdb446799cb45bbb43e7b'
         self.trakt_api_key = 'e9f4942e8fbd766b00017b445af15349ead0d483521fec6cd35af40256e8d744'
+        self.tmdb = tmdbsimple
+        self.tmdb.API_KEY = self.tmdb_api_key
+        self.tmdb_search = self.tmdb.Search()
 
     def search_show(self, show_name):
-        results = self.api.search(name=show_name)
+        results = self.tmdb_search.tv(query=html.escape(show_name))
+        # results = self.api.search(name=show_name)
         returned_shows = []
-        for show in results:
-            returned_shows.append(SearchResult(show))
+        for show in results['results'][:10]:
+            returned_shows.append(self.get_show(show['id']))
         return returned_shows
 
     def get_show(self, show_id):
-        return self.api.series(show_id)
+
+        s = self.tmdb.TV(show_id)
+        return s.info()
+        # return self.api.series(show_id)
 
     def get_show_images(self, show_id):
         # this should only be done once, when the show is added.  Any other images
@@ -135,19 +142,6 @@ class Contentor(object):
         return tvdb_links
 
 
-class SearchResult(object):
-    """container for search results"""
-
-    def __init__(self, show):
-        self.id = show.id
-        self.name = show.seriesName
-        self.premier_date = None if show.firstAired is None else show.firstAired.strftime('%Y-%m-%d')
-        self.network = show.network if show.network.strip() != '' else 'NA'
-
-    def __str__(self):
-        return '%s on %s at %s' % (self.name, self.network, self.premier_date)
-
-
 class MovieDetails(object):
     def __init__(self, movie_response, cast_response):
         self.movie = movie_response
@@ -184,6 +178,10 @@ class Artworks(object):
 # images = t.get_show_images(result[0].id)
 
 # c = Contentor()
+# result = c.search_show('supernatural')[0]
+# s = c.get_show(result['id'])
+
+
 # # s = c.get_show(273181)
 # # c.get_show_images(273181)
 # x = c.get_popular()

@@ -8,19 +8,19 @@ import Models
 def add_show(show_id, db):
     c = TvdbInteraction.Contentor()
     series = c.get_show(show_id)
-    episodes = series.episodes()
-    artwork = c.get_show_images(show_id)
+    # episodes = series.episodes()
+    # artwork = c.get_show_images(show_id)
 
-    new_show = Show(show_id=show_id,
-                    show_name=series.seriesName,
-                    first_aired=series.firstAired,
-                    is_active=series.status == 'Continuing',
-                    overview=series.overview,
-                    banner=artwork.show_banner,
-                    poster=artwork.show_poster,
-                    thumb=artwork.show_thumb,
-                    background=artwork.background,
-                    large_image=artwork.show_large)
+    new_show = Show(show_id=series['id'],
+                    show_name=series['name'],
+                    first_aired=datetime.datetime.strptime(series['first_air_date'], '%Y-%m-%d'),
+                    is_active=series['status'] == 'Returning Series',
+                    overview=series['overview'],
+                    banner="",
+                    poster='https://image.tmdb.org/t/p/w185' + series['poster_path'],
+                    thumb="",
+                    background='https://image.tmdb.org/t/p/original' + series['poster_path'],
+                    large_image='')
 
     new_show.make_regex()
 
@@ -36,8 +36,13 @@ def add_show(show_id, db):
     ActionLog.log('"%s" added.' % new_show.show_name)
 
     #add episodes
-    for e in episodes:
-        add_episode(e, new_show, db, c, artwork)
+    for s in series['seasons']:
+        episodes = c.tmdb.TV_Seasons(series['id'], s['id'])
+        for e in episodes:
+            x = e
+
+    # for e in episodes:
+    #     add_episode(e, new_show, db, c, artwork)
 
     db.commit()
 

@@ -8,6 +8,7 @@ function SetupTVPopover(e) {
     poster = $(element).data('poster');
     actionRow = ''
     var titleText = ''
+    
     if ($(e).hasClass('addable')) {
         titleText = name;
         actionRow = '<div class="row"><div class="col-xs-12">' + 
