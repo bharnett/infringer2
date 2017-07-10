@@ -23,6 +23,7 @@ body {
 .row-scroll-section {
     max-height: 80%;
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 /*specifics around elements & margins */

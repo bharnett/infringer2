@@ -203,8 +203,8 @@
 </body>
 <script type="text/javascript">
     $(document).ready(function(){
-        $('[data-toggle="tooltip"]').tooltip()
-
+        $('[data-toggle="tooltip"]').tooltip();
+        $('.row-scroll-section').niceScroll();
         $('.tv-episode').each(function(i,e) {
             SetupTVPopover(e);
         });
