@@ -1,0 +1,83 @@
+        #movie-section #ignore-all-button{
+            opacity:0.0;
+            transition: opacity .55s ease-in-out;
+            -moz-transition: opacity .55s ease-in-out;
+            -webkit-transition: opacity .55s ease-in-out;
+        }
+
+        #movie-section:hover #ignore-all-button{
+            opacity:1.0;
+            transition: opacity .55s ease-in-out;
+            -moz-transition: opacity .55s ease-in-out;
+            -webkit-transition: opacity .55s ease-in-out;
+        }
+
+        .movie-row .movie-column .movie-action {
+            opacity:0.0;
+            transition: opacity .55s ease-in-out;
+            -moz-transition: opacity .55s ease-in-out;
+            -webkit-transition: opacity .55s ease-in-out;
+        }
+
+        .movie-row:hover .movie-column .movie-action {
+            opacity:1.0;
+            transition: opacity .55s ease-in-out;
+            -moz-transition: opacity .55s ease-in-out;
+            -webkit-transition: opacity .55s ease-in-out;
+        }
+
+        .movie-row .movie-column p {
+            color: #4e5d6c;
+            transition: color .55s ease-in-out;
+            -moz-transition: color .55s ease-in-out;
+            -webkit-transition: color .55s ease-in-out;
+        }
+
+        .movie-row:hover .movie-column p {
+            color: #ebebeb;
+            transition: color .55s ease-in-out;
+            -moz-transition: color .55s ease-in-out;
+            -webkit-transition: color .55s ease-in-out;
+        }
+        
+        .movie-row .movie-column .label {
+            opacity: .1;
+            transition: opacity .55s ease-in-out;
+            -moz-transition: opacity .55s ease-in-out;
+            -webkit-transition: opacity .55s ease-in-out;
+        }
+
+        .movie-row:hover .movie-column .label {
+            opacity: 1.0;
+            transition: opacity .55s ease-in-out;
+            -moz-transition: opacity .55s ease-in-out;
+            -webkit-transition: opacity .55s ease-in-out;
+        }
+
+         .addable-section .row-scroll-section {
+            opacity: .5;
+            transition: opacity .55s ease-in-out;
+            -moz-transition: opacity .55s ease-in-out;
+            -webkit-transition: opacity .55s ease-in-out;
+        }
+
+        .addable-section:hover .row-scroll-section {
+            opacity: 1.0;
+            transition: opacity .55s ease-in-out;
+            -moz-transition: opacity .55s ease-in-out;
+            -webkit-transition: opacity .55s ease-in-out;
+        }
+
+        #search-results-table tbody tr .btn  {
+            opacity: 0;
+            transition: opacity .3s ease-in-out;
+            -moz-transition: opacity .3s ease-in-out;
+            -webkit-transition: opacity .3s ease-in-out;
+        }
+
+        #search-results-table tbody tr:hover .btn  {
+            opacity: 1.0;
+            transition: opacity .3s ease-in-out;
+            -moz-transition: opacity .3s ease-in-out;
+            -webkit-transition: opacity .3s ease-in-out;
+        }

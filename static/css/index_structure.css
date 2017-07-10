@@ -77,6 +77,8 @@ body {
     margin-top: 27px;
 }
 
+/*misc stuff */
+
 .tmdb-image img {
     max-height: 30px;
 }
@@ -89,3 +91,6 @@ body {
     curosor: pointer;
 }
 
+.popover {
+    max-width: 500px;
+}

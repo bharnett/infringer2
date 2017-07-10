@@ -29,6 +29,7 @@ class Show(Base):
     regex = Column(String)
     last_updated = Column(DateTime, default=datetime.datetime.now())
     overview = Column(String)
+    name_override = Column(String)
 
     def __str__(self):
         return "%s - %s" % (self.show_name, self.show_id)
@@ -147,14 +148,6 @@ class Movie(Base):
             release_date = ''
 
         return s, release_date
-
-
-class MovieURL(Base):
-    __tablename__ = 'movieurl'
-    id = Column(Integer, primary_key=True)
-    movie_id = Column(Integer, ForeignKey('movie.id'))
-    movie = relationship(Movie, backref=backref('movieurls', cascade='delete', lazy='dynamic'))
-    url = Column(String)
 
 
 class ActionLog(Base):

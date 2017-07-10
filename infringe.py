@@ -5,7 +5,7 @@ import webbrowser
 import tvdb_api
 import LinkRetrieve
 import Utils
-from Models import Show, Episode, Movie, MovieURL, ActionLog, ScanURL, Config
+from Models import Show, Episode, Movie, ActionLog, ScanURL, Config
 import Models
 import json
 import cherrypy

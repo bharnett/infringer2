@@ -6,6 +6,7 @@ function HandleSearchAndAdd() {
             $("#search-button").click();
         }
     });
+    $('.addable-button').click(OnShowAddClick)
 }
 
 // function OnSearchClick() {
@@ -68,7 +69,7 @@ function OnSearchClick() {
                 $(row).append('<td>' + val.name + '</td>');
                 $(row).append('<td>' + val.premier_date + '</td>');
                 $(row).append('<td>' + val.network + '</td>');
-                $(row).append('<td><button type="button" class="btn btn-info btn-xs" data-series-id="' +
+                $(row).append('<td><button type="button" class="btn btn-info btn-xs" data-id="' +
                     val.id + '">Add <i class="fa fa-spinner fa-spin" style="display:none;" aria-hidden="true"></i></button></td>');
 
             });
@@ -89,7 +90,7 @@ function OnSearchClick() {
 
 
 function OnShowAddClick() {
-    var id = $(this).data('series-id');
+    var id = $(this).data('id');
     var btn = $(this);
     var data = {
         'series_id': id

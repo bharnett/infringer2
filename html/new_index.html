@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="/static/css/index_structure.css">
     <link rel="stylesheet" href="/static/css/index_transitions.css">
     <script type="text/javascript" src="/static/js/search_and_add.js"></script>
+    <script type="text/javascript" src="/static/js/tv_popover.js"></script>
+
 
 </head>
 <body>
@@ -46,10 +48,6 @@
                             <h5>${d.strftime("%A")}
                                 <small> - ${d.strftime("%b %d")}</small>
                             </h5>
-
-                            <!--<span class="day-header">${d.strftime("%A")}</span>-->
-                            <!--<span class="date-header">${d.strftime("%b %d")}</span>-->
-
                         </th>
                         % endfor
                     </tr>
@@ -60,7 +58,12 @@
                         <td>
                             <div>
                                 % for s in [x for x in vb.this_week if x.air_date == d]:
-                                <p>${str(s)}</p>
+                                <p>
+                                    <a href="#" class="tv-episode" data-id="${s.show.show_id}" data-name="${s.episode_name}"
+                                       data-poster="${s.episode_image}" data-overview="${s.episode_description}">
+                                        ${str(s)}
+                                    </a>
+                                </p>
                                 % endfor
                             </div>
 
@@ -80,14 +83,15 @@
             <div class="row-scroll-section">
                 % if len(vb.premiers) > 0:
                 <ul class="list-group">
-                    % for p in vb.premiers:
+                    % for s in vb.popular:
                     <li class="list-group-item">
                     <span class="badge">
-                        <a href="#" title="Add ${p.name}">
+                        <a href="#" title="Add ${s.name}">
                             <i class="fa fa-add"></i>
                         </a>
                     </span>
-                        <a href="#">${p.name}</a>
+                        <a href="#" class="tv-episode addable" data-id="${s.id}" data-name="${s.name}"
+                           data-poster="${s.poster}" data-overview="${s.overview}">${s.name}</a>
                     </li>
                     % endfor
                 </ul>
@@ -174,14 +178,15 @@
             % if len(vb.popular):
             <div class="row-scroll-section">
                 <ul class="list-group">
-                    % for p in vb.popular:
+                    % for s in vb.popular:
                     <li class="list-group-item">
                     <span class="badge">
-                        <a href="#" title="Add ${p.name}">
+                        <a href="#" title="Add ${s.name}">
                             <i class="fa fa-add"></i>
                         </a>
                     </span>
-                        <a href="#">${p.name}</a>
+                        <a href="#" class="tv-episode addable" data-id="${s.id}" data-name="${s.name}"
+                           data-poster="${s.poster}" data-overview="${s.overview}">${s.name}</a>
                     </li>
                     % endfor
                 </ul>
@@ -199,6 +204,11 @@
 <script type="text/javascript">
     $(document).ready(function(){
         $('[data-toggle="tooltip"]').tooltip()
+
+        $('.tv-episode').each(function(i,e) {
+            SetupTVPopover(e);
+        });
+
         HandleSearchAndAdd();
     });
 
