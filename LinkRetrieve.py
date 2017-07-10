@@ -34,7 +34,11 @@ def search_sites(db=None):
             except Exception as ex:
                 continue
 
-            soup = soup.select(source.link_select)[:1000] # get dem links
+            # soup = soup.select(source.link_select)[:1000] # get dem links
+            soup = soup.select('a')[:2000] # get dem links
+            # let's try doing this with out the link selection, since we can parse them fast with
+            # the regex, we don't necessarily need it.
+
 
             for link in soup:
                 check_result = search.check_link(link, source)
