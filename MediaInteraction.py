@@ -37,9 +37,13 @@ def add_show(show_id, db):
 
     #add episodes
     for s in series['seasons']:
-        episodes = c.tmdb.TV_Seasons(series['id'], s['id'])
-        for e in episodes:
-            x = e
+        season_number = s['season_number']
+        if season_number == 0:
+            continue
+        else:
+            season_detail = c.tmdb.TV_Seasons(series['id'], season_number).info()
+            for e in season_detail['episodes']:
+                add_episode(e, new_show, db, s)
 
     # for e in episodes:
     #     add_episode(e, new_show, db, c, artwork)
@@ -47,42 +51,44 @@ def add_show(show_id, db):
     db.commit()
 
 
-def add_episode(tvdb_episode, db_show, db, c=None, artwork=None):
-    if c is None:
-        c = TvdbInteraction.Contentor()
+def add_episode(tmdb_episode, db_show, db, season):
+    # if c is None:
+    #     c = TvdbInteraction.Contentor()
+    #
+    # if artwork is None:
+    #     artwork = c.get_show_images(db_show.id)
 
-    if artwork is None:
-        artwork = c.get_show_images(db_show.id)
+    if tmdb_episode['season_number'] >= 1 and tmdb_episode['episode_number'] >= 1:
+        first_aired = None if tmdb_episode['air_date'] is None else datetime.datetime.strptime(tmdb_episode['air_date'], '%Y-%m-%d')
 
-    if tvdb_episode.airedSeason != 0:
-        first_aired = None if tvdb_episode.firstAired is None else tvdb_episode.firstAired
-
-        if first_aired is not None and first_aired >= datetime.date.today() + datetime.timedelta(-2):
+        if first_aired is not None and first_aired >= datetime.datetime.now() + datetime.timedelta(days=-2):
             episode_retrieved = 'Pending'
         elif first_aired is None:
             episode_retrieved = 'Pending'
         else:
             episode_retrieved = 'Retrieved'
 
-        try:
-            if len(artwork.seasons_posters) > 0 and len(artwork.seasons_posters) >= tvdb_episode.airedSeason - 1:
-                # get first season poster
-                episode_art = artwork.seasons_posters[tvdb_episode.airedSeason - 1]
-            else:
-                episode_art = artwork.show_poster
-        except:
-            episode_art = artwork.show_poster
+        episode_art = 'https://image.tmdb.org/t/p/w185' + season['poster_path']
 
-        new_episode = Episode(id=tvdb_episode.id,
-                              season_number=tvdb_episode.airedSeason,
-                              episode_number=tvdb_episode.airedEpisodeNumber,
+        # try:
+        #     if len(artwork.seasons_posters) > 0 and len(artwork.seasons_posters) >= tvdb_episode.airedSeason - 1:
+        #         # get first season poster
+        #         episode_art = artwork.seasons_posters[tvdb_episode.airedSeason - 1]
+        #     else:
+        #         episode_art = artwork.show_poster
+        # except:
+        #     episode_art = artwork.show_poster
+
+        new_episode = Episode(id=tmdb_episode['id'],
+                              season_number=tmdb_episode['season_number'],
+                              episode_number=tmdb_episode['episode_number'],
                               air_date=first_aired,
-                              episode_name=tvdb_episode.episodeName,
+                              episode_name=tmdb_episode['name'],
                               status=episode_retrieved,
                               show=db_show,
-                              episode_description=tvdb_episode.overview,
+                              episode_description=tmdb_episode['overview'],
                               episode_image=episode_art,
-                              last_updated=tvdb_episode.lastUpdated,
+                              last_updated=None,
                               )
 
         db.add(new_episode)
@@ -119,8 +125,7 @@ def update_all(database=None):
     db = Models.connect()
     shows = db.query(Show).all()
     for s in shows:
-        series = c.api.series(s.show_id)
-        update_episodes(series.episodes(), s, db, c)
+        show_changes = c.tmdb.TV(s.show_id).latest()  #c.get_show(s.show_id)
     add_addables(db)
 
 
