@@ -84,7 +84,7 @@
             <div class="row-scroll-section">
                 % if len(vb.premiers) > 0:
                 <ul class="list-group">
-                    % for s in vb.popular:
+                    % for s in vb.premiers:
                     <li class="list-group-item">
                     <span class="badge">
                         <a href="#" title="Add ${s.name}">
@@ -124,6 +124,7 @@
             <div class="row-scroll-section">
                 % for m in vb.movies:
                 <div class="row movie-row">
+                    <div>
                     <div class="col-md-1">
                         <img class="thumbnail movie-thumb" alt="${m.title}" src="${m.poster}">
                     </div>
@@ -166,6 +167,7 @@
 
                         <p class="rating"><strong>Rating: </strong><span class="${rating_class}">${rating}</span></p>
                         <p><strong>Cast: </strong>${m.actors}</p>
+                    </div>
                     </div>
                 </div>
                 % endfor

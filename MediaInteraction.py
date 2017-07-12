@@ -1,5 +1,5 @@
 import TvdbInteraction
-from Models import Show, Episode, Movie, Config, ActionLog, AddableShow
+from Models import Show, Episode, Movie, Config, ActionLog, PremierShow, PopularShow
 import os
 import datetime
 import Models
@@ -153,9 +153,12 @@ def update_show(id, show, db, c):
             season_detail = c.tmdb.TV_Seasons(series['id'], season_number).info()
             update_episodes(season_detail['episodes'], show, s, db, c)
 
+
 def add_addables(db):
     #clean out current tables
-    db.query(AddableShow).delete()
+    db.query(PopularShow).delete()
+    db.query(PremierShow).delete()
+    db.commit()
 
     c = TvdbInteraction.Contentor()
     premiers = c.get_upcoming_premiers()
@@ -167,33 +170,28 @@ def add_addables(db):
     db.commit()
 
 
-def create_addables(resp_and_ids, type, db):
-    resp = resp_and_ids[0]
-    ids = resp_and_ids[1]
-    for i in range(len(resp_and_ids[0])):
-        if ids[i] == 0:
-            continue
+def create_addables(shows, type, db):
+    for s in shows:
+        if type == 'premier':
+            db_show = PremierShow(name=s['name'],
+                                  poster='https://image.tmdb.org/t/p/w185' + s['poster_path'],
+                                  overview=s['overview'],
+                                  first_aired=datetime.datetime.strptime(s['first_air_date'], '%Y-%m-%d'),
+                                  id=s['id'])
         else:
-            tmdb_show = resp[i]
-            db_show = AddableShow(name=tmdb_show['name'],
-                                  poster='https://image.tmdb.org/t/p/w185' + tmdb_show['poster_path'],
-                                  overview=tmdb_show['overview'],
-                                  addable_type=type,
-                                  first_aired=datetime.datetime.strptime(tmdb_show['first_air_date'], '%Y-%m-%d'),
-                                  id=ids[i])
-            db.add(db_show)
+            db_show = PopularShow(name=s['name'],
+                                  poster='https://image.tmdb.org/t/p/w185' + s['poster_path'],
+                                  overview=s['overview'],
+                                  first_aired=datetime.datetime.strptime(s['first_air_date'], '%Y-%m-%d'),
+                                  id=s['id'])
+        # db_show.name = ['name']
+        # db_show.poster ='https://image.tmdb.org/t/p/w185' + s['poster_path']
+        # db_show.overview = s['overview']
+        # db_show.first_aired = datetime.datetime.strptime(s['first_air_date'], '%Y-%m-%d')
+        # db_show.id = s['id']
+
+        db.add(db_show)
 
 
-# update_all()
-
-#preacher is 300472
-
-# database = Models.connect()
-# # show = database.query(Show).filter(Show.show_id == 300472).first()
-# # if show is not None:
-# #     database.delete(show)
-# #     database.commit()
-# #
-# # add_show(300472, database)
-#
-# add_addables(database)
+d = Models.connect()
+add_addables(d)

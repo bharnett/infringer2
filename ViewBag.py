@@ -1,5 +1,5 @@
 import Models
-from Models import AddableShow, Show, Episode, Movie, Config
+from Models import PopularShow, PremierShow, Show, Episode, Movie, Config
 import datetime
 from sqlalchemy import func
 
@@ -16,8 +16,8 @@ class ViewBag(object):
         self.config = None;
 
     def populate_addables(self):
-        self.premiers = self.db.query(AddableShow).filter(AddableShow.addable_type == 'premier').all()
-        self.popular = self.db.query(AddableShow).filter(AddableShow.addable_type == 'popular').all()
+        self.premiers = self.db.query(PremierShow).all()
+        self.popular = self.db.query(PopularShow).all()
         self.movies = self.db.query(Movie).filter(Movie.status == 'Ready').all()
 
         #get only for this week:

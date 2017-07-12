@@ -90,7 +90,7 @@ class Contentor(object):
                     popular_list.append(show)
             pop = tv.popular(language='en-US', page=i)
 
-        return popular_list, self.get_tvdb_ids(tmdb, popular_list)
+        return popular_list
 
     def get_upcoming_premiers(self):
         start = str(datetime.date.today() + datetime.timedelta(days=-7))
@@ -98,26 +98,26 @@ class Contentor(object):
 
         discovery = self.tmdb.Discover()
         premiers = discovery.tv(language='en-US', first_air_date_gte=start, first_air_date_lte=end)
-        total_pages = premiers['total_pages']
+        total_pages = premiers['total_pages'] + 1
         list_of_premiers = []
 
         for i in range(2, total_pages):
             shows = premiers['results']
             for show in [x for x in shows if x['original_language'] ==  'en']:
                     list_of_premiers.append(show)
-            premiers = discovery.tv(language='en-US', first_air_date_gte=start, first_air_date_lte='end', page=i)
+            premiers = discovery.tv(language='en-US', first_air_date_gte=start, first_air_date_lte=end, page=i)
 
-        return list_of_premiers, self.get_tvdb_ids(tmdb, list_of_premiers)
+        return list_of_premiers
         # filter shows that are currently in the user's database after data is returned
 
-    def get_tvdb_ids(self, tmdb, list):
+    def get_tvdb_ids(self, list):
         tvdb_links = []
         i = 30
         for s in list:
             if i == 30: #added in a sleep function for rate limiting on api
                 time.sleep(5)
                 i = 0
-            tvdb_id = tmdb.TV(s['id']).external_ids()['tvdb_id']
+            tvdb_id = self.TV(s['id']).external_ids()['tvdb_id']
             if tvdb_id is None:
                 tvdb_id = 0
 
@@ -161,8 +161,6 @@ class Artworks(object):
 # result = t.search_show('girl')
 # images = t.get_show_images(result[0].id)
 
-c = Contentor()
-result = c.get_upcoming_premiers()
 # result = c.search_show('supernatural')[0]
 # s = c.get_show(result['id'])
 

@@ -96,15 +96,21 @@ class Episode(Base):
         self.parent_download_page = ''
 
 
-class AddableShow(Base):
-    __tablename__ = 'addableshow'
+class PremierShow(Base):
+    __tablename__ = 'premiershow'
     id = Column(Integer, primary_key=True)
     name = Column(String)
     poster = Column(String)
     overview = Column(String)
-    addable_type = Column(String)  #either 'popular' or 'premier'
     first_aired = Column(Date)
 
+class PopularShow(Base):
+    __tablename__ = 'popularshow'
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    poster = Column(String)
+    overview = Column(String)
+    first_aired = Column(Date)
 
 class ScanURL(Base):
     __tablename__ = 'scanurl'
