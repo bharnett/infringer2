@@ -93,20 +93,19 @@ class Contentor(object):
         return popular_list, self.get_tvdb_ids(tmdb, popular_list)
 
     def get_upcoming_premiers(self):
-        tmdb = tmdbsimple
-        tmdb.API_KEY = self.tmdb_api_key
-        tv = tmdb.TV()
-        air = tv.on_the_air(language='en-US')
-        total_pages = air['total_pages'] + 1
+        start = str(datetime.date.today() + datetime.timedelta(days=-7))
+        end = str(datetime.date.today() + datetime.timedelta(days=7))
+
+        discovery = self.tmdb.Discover()
+        premiers = discovery.tv(language='en-US', first_air_date_gte=start, first_air_date_lte=end)
+        total_pages = premiers['total_pages']
         list_of_premiers = []
 
         for i in range(2, total_pages):
-            shows = air['results']
-            for show in shows:
-                if show['first_air_date'] >= str(datetime.date.today()) and show['original_language'] == 'en':
-                    # add the show because it is in the future
+            shows = premiers['results']
+            for show in [x for x in shows if x['original_language'] ==  'en']:
                     list_of_premiers.append(show)
-            air = tv.airing_today(language='en-US', page=i)
+            premiers = discovery.tv(language='en-US', first_air_date_gte=start, first_air_date_lte='end', page=i)
 
         return list_of_premiers, self.get_tvdb_ids(tmdb, list_of_premiers)
         # filter shows that are currently in the user's database after data is returned
@@ -162,7 +161,8 @@ class Artworks(object):
 # result = t.search_show('girl')
 # images = t.get_show_images(result[0].id)
 
-# c = Contentor()
+c = Contentor()
+result = c.get_upcoming_premiers()
 # result = c.search_show('supernatural')[0]
 # s = c.get_show(result['id'])
 
