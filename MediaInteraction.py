@@ -68,8 +68,10 @@ def add_episode(tmdb_episode, db_show, db, season):
         else:
             episode_retrieved = 'Retrieved'
 
-        episode_art = 'https://image.tmdb.org/t/p/w185' + season['poster_path']
-
+        if season['poster_path'] is not None:
+            episode_art = 'https://image.tmdb.org/t/p/w185' + season['poster_path']
+        else:
+            episode_art = db_show.poster
         # try:
         #     if len(artwork.seasons_posters) > 0 and len(artwork.seasons_posters) >= tvdb_episode.airedSeason - 1:
         #         # get first season poster
@@ -94,26 +96,38 @@ def add_episode(tmdb_episode, db_show, db, season):
         db.add(new_episode)
 
 
-def update_episodes(tvdb_episodes, db_show, db, c=None):
+def update_episodes(tmdb_episodes, db_show, season, db, c=None):
     if c is None:
         c = TvdbInteraction.Contentor()
-    artwork = c.get_show_images(db_show.show_id)
+    # artwork = c.get_show_images(db_show.show_id)
 
-    for e in tvdb_episodes:
+    for e in tmdb_episodes:
         # check if episode is in db
-        update_episode = db.query(Episode).filter(Episode.epsode_id == e.id).first()
+        update_episode = db.query(Episode).filter(Episode.id == e['id']).first()
         if update_episode is None:
-            add_episode(e, db_show, db, c, artwork)
+            add_episode(e, db_show, db, season)
         else:
             #update episode with episode data
-            if update_episode.last_updated < e.lastUpdated:
-                first_aired = None if e.firstAired is None else e.firstAired
+            first_aired = None if e['air_date'] is None else datetime.datetime.strptime(e['air_date'], '%Y-%m-%d')
 
-                update_episode.first_aired = first_aired
-                update_episode.episode_name = e.episodeName
-                update_episode.last_updated = e.lastUpdated
+
+            update_episode.first_aired = first_aired
+            update_episode.episode_name = e['name']
+            update_episode.overview = e['overview']
+            # update_episode.last_updated = e.lastUpdated
+            if season['poster_path'] is not None:
+                episode_art = 'https://image.tmdb.org/t/p/w185' + season['poster_path']
+            else:
+                episode_art = db_show.poster
 
     db.commit()
+
+def update_one(id, db, c=None):
+    if c is None:
+        c = TvdbInteraction.Contentor()
+
+    show = db.query(Show).filter(Show.show_id == id).first()
+    update_show(id, show, db, c)
 
 
 def update_all(database=None):
@@ -122,12 +136,22 @@ def update_all(database=None):
     else:
         db = database
     c = TvdbInteraction.Contentor()
-    db = Models.connect()
+
     shows = db.query(Show).all()
-    for s in shows:
-        show_changes = c.tmdb.TV(s.show_id).latest()  #c.get_show(s.show_id)
+    for show in shows:
+        update_show(show.show_id, show, db, c)
     add_addables(db)
 
+
+def update_show(id, show, db, c):
+    series = c.get_show(show.show_id)
+    for s in series['seasons']:
+        season_number = s['season_number']
+        if season_number == 0 or s['episode_count'] == 0:
+            continue
+        else:
+            season_detail = c.tmdb.TV_Seasons(series['id'], season_number).info()
+            update_episodes(season_detail['episodes'], show, s, db, c)
 
 def add_addables(db):
     #clean out current tables
@@ -159,6 +183,8 @@ def create_addables(resp_and_ids, type, db):
                                   id=ids[i])
             db.add(db_show)
 
+
+# update_all()
 
 #preacher is 300472
 

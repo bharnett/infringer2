@@ -66,9 +66,10 @@ function OnSearchClick() {
             $.each(results, function (i, val) {
                 $('#search-results-table tbody').append('<tr></tr>');
                 var row = $('#search-results-table tr:last');
+                var network = val.networks.length == 0 ? 'NA' : val.networks[0].name;
                 $(row).append('<td>' + val.name + '</td>');
                 $(row).append('<td>' + val.first_air_date + '</td>');
-                $(row).append('<td>' + val.networks[0].name + '</td>');
+                $(row).append('<td>' + network + '</td>');
                 $(row).append('<td><button type="button" class="btn btn-info btn-xs" data-id="' +
                     val.id + '">Add <i class="fa fa-spinner fa-spin" style="display:none;" aria-hidden="true"></i></button></td>');
 

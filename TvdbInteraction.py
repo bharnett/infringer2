@@ -1,4 +1,3 @@
-from tvdbrest.client import TVDB
 import requests
 import json
 import tmdbsimple
@@ -11,11 +10,6 @@ class Contentor(object):
     """class for calling tvdb"""
 
     def __init__(self):
-        self.tvdb_api_key = 'EFF4CBD618B5C756'
-        self.tvdb_userkey = '3BBD3F7E1043129C'
-        self.tvdb_username = 'bharnett1825'
-        self.api = TVDB(self.tvdb_username, self.tvdb_userkey, self.tvdb_api_key)
-        self.api.login()
         self.fanart_api_key = 'bdb9e6a92d25c43e88a7ad36d835a715'
         self.tmdb_api_key = '79f408a7da4bdb446799cb45bbb43e7b'
         self.trakt_api_key = 'e9f4942e8fbd766b00017b445af15349ead0d483521fec6cd35af40256e8d744'
@@ -25,7 +19,6 @@ class Contentor(object):
 
     def search_show(self, show_name):
         results = self.tmdb_search.tv(query=html.escape(show_name))
-        # results = self.api.search(name=show_name)
         returned_shows = []
         for show in results['results'][:10]:
             returned_shows.append(self.get_show(show['id']))
@@ -35,7 +28,6 @@ class Contentor(object):
 
         s = self.tmdb.TV(show_id)
         return s.info()
-        # return self.api.series(show_id)
 
     def get_show_images(self, show_id):
         # this should only be done once, when the show is added.  Any other images
@@ -61,13 +53,6 @@ class Contentor(object):
             return arts['seasonposter'][season_number - 1]
         else:
             return arts['tvposter'][0]
-
-    def get_updates(self, show_id, last_update):
-        show = self.api.series(show_id)
-        if show.last_updated >= last_update:
-            return show.episodes()
-        else:
-            return []
 
     def get_movie_details(self, movie_text, year=''):
         tmdb = tmdbsimple
