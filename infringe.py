@@ -297,17 +297,16 @@ class Infringer(object):
         ar = AjaxResponse('Movie downloading...')
         try:
             data = cherrypy.request.json
-            movie_id = data['movieid']
-            is_ignore = data['isignore']
-            is_cleanup = data['iscleanup']
+            movie_id = data['id']
+            action = data['action']
             config = cherrypy.request.db.query(Config).first()
-            if is_cleanup:
+            if action == 'cleanup':
                 cherrypy.request.db.query(Movie).filter(Movie.status == 'Ignored').delete()
                 cherrypy.request.db.commit()
                 ActionLog.log("DB cleanup completed")
             else:
                 m = cherrypy.request.db.query(Movie).filter(Movie.id == movie_id).first()
-                if is_ignore:
+                if action == 'ignore':
                     m.status = 'Ignored'
                 else:
                     LinkInteraction.write_crawljob_file(m.title, config.movies_directory, m.links,

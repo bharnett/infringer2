@@ -9,34 +9,6 @@ function HandleSearchAndAdd() {
     $('.addable-button').click(OnShowAddClick)
 }
 
-// function OnSearchClick() {
-//     text = $('#show-search-input').val();
-
-//     $(this).find('i').toggle();
-//     $.get('/search', {
-//             show_search: text
-//         },
-//         function (data) {
-//             $('#search-results-table tbody tr').remove(); //remove all existing rows before adding
-//             var results = $.parseJSON(data);
-//             $.each(results, function (i, val) {
-//                 $('#search-results-table tbody').append('<tr></tr>');
-//                 var row = $('#search-results-table tr:last');
-//                 $(row).append('<td>' + val.name + '</td>');
-//                 $(row).append('<td>' + val.premier_date + '</td>');
-//                 $(row).append('<td>' + val.network + '</td>');
-//                 $(row).append('<td><button type="button" class="btn btn-info btn-xs" data-series-id="' +
-//                     val.id + '">Add <i class="fa fa-spinner fa-spin" style="display:none;" aria-hidden="true"></i></button></td>');
-
-//             });
-//             $('#add-show-modal').modal();
-//             $('#search-results-table button').click(OnShowAddClick);
-//             $(this).find('i').toggle();
-
-
-
-//         });
-// }
 
 function OnSearchClick() {
     text = $('#show-search-input').val();

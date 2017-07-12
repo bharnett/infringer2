@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/static/css/index_transitions.css">
     <script type="text/javascript" src="/static/js/search_and_add.js"></script>
     <script type="text/javascript" src="/static/js/tv_popover.js"></script>
+    <script type="text/javascript" src="/static/js/movies.js"></script>
 
 
 </head>
@@ -134,13 +135,14 @@
                                data-movie-actors="${m.actors}">${m.title}</a>
                             <div class="movie-action" style="display:inline;">
                                 |
-                                <a title="Download ${m.title}" data-toggle="tooltip" href="#">
+                                <a title="Download ${m.title}" data-movie-action="download" data-movie-id="${m.id}" data-contianer="body" data-toggle="tooltip" href="#">
                                     <i class="fa fa-download" aria-hidden="true"></i>
                                 </a>
 
-                                <a title="Remove ${m.title}" data-toggle="tooltip" href="#">
+                                <a title="Remove ${m.title}" data-movie-action="ignore" data-movie-id="${m.id}" data-toggle="tooltip" href="#">
                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                 </a>
+                                <i class="fa fa-spinner fa-spin" style="display:none;" aria-hidden="true"></i>
                             </div>
                         </h5>
                         <p class="movie-description">${m.overview}</p>
@@ -212,6 +214,8 @@
         });
 
         HandleSearchAndAdd();
+
+        $('.movie-action a').click(OnActionClick);
     });
 
 
