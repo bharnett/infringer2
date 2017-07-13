@@ -130,11 +130,11 @@
                     </div>
                     <div class="col-md-6 movie-column">
                         <h5>
-                            <a href="${'https://www.themoviedb.org/movie/' + str(m.tmdb_id)}" target="_blank"
+                            <a href="${'https://www.themoviedb.org/movie/' + str(m.id)}" target="_blank"
                                class="movie-link pb" data-movie-id="${m.id}" data-movie-rating="${m.tmdb_rating}"
                                data-movie-overview="${m.tmdb_rating}" data-movie-poster="${m.poster}"
                                data-movie-actors="${m.actors}">${m.title}</a>
-                            <div class="movie-action" style="display:inline;">
+                            <div class="movie-action" style="display:inline!important">
                                 |
                                 <a title="Download ${m.title}" data-movie-action="download" data-movie-id="${m.id}" data-contianer="body" data-toggle="tooltip" href="#">
                                     <i class="fa fa-download" aria-hidden="true"></i>
@@ -143,7 +143,10 @@
                                 <a title="Remove ${m.title}" data-movie-action="ignore" data-movie-id="${m.id}" data-toggle="tooltip" href="#">
                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                 </a>
+                            </div>
+                            <div style="display:inline!important;">
                                 <i class="fa fa-spinner fa-spin" style="display:none;" aria-hidden="true"></i>
+                                <p class="movie-action-label"></p>
                             </div>
                         </h5>
                         <p class="movie-description">${m.overview}</p>

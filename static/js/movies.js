@@ -11,14 +11,14 @@ function HandleMovieAction() {
         dataType: 'text',
         contentType: 'application/json',
         type: 'POST',
-        beforeSend: function () {
+        beforeSend: function() {
             //animate and hide action icons
             //show spinner icon
         },
-        error: function (req, errorString, ex) {
+        error: function(req, errorString, ex) {
             showStatus(true, errorString);
         },
-        success: function (data) {
+        success: function(data) {
             var ar = $.parseJSON($.parseJSON(data));
             if (ar.status == 'success') {
                 if (action == 'ignore') {
@@ -39,7 +39,6 @@ function HandleMovieAction() {
     })
 }
 
-function OnActionClick(){
-    $(this).addClass('animated bounceOut')
-    
+function OnActionClick() {
+    $(this).closest('.movie-action')
 }
