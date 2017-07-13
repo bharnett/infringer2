@@ -172,15 +172,16 @@ def add_addables(db):
 
 def create_addables(shows, type, db):
     for s in shows:
+        poster = '/static/tmdb-stacked.png' if s['poster_path'] is None else s['poster_path']
         if type == 'premier':
             db_show = PremierShow(name=s['name'],
-                                  poster='https://image.tmdb.org/t/p/w185' + s['poster_path'],
+                                  poster=poster,
                                   overview=s['overview'],
                                   first_aired=datetime.datetime.strptime(s['first_air_date'], '%Y-%m-%d'),
                                   id=s['id'])
         else:
             db_show = PopularShow(name=s['name'],
-                                  poster='https://image.tmdb.org/t/p/w185' + s['poster_path'],
+                                  poster=poster,
                                   overview=s['overview'],
                                   first_aired=datetime.datetime.strptime(s['first_air_date'], '%Y-%m-%d'),
                                   id=s['id'])
@@ -193,5 +194,3 @@ def create_addables(shows, type, db):
         db.add(db_show)
 
 
-d = Models.connect()
-add_addables(d)
