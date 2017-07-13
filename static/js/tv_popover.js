@@ -8,33 +8,29 @@ function SetupTVPopover(e) {
     poster = $(element).data('poster');
     actionRow = ''
     var titleText = ''
-    
-    if ($(e).hasClass('addable')) {
+    var placementOption = 'right auto'
+    var isAddable = $(e).hasClass('addable');
+    var containerOption = ''
+
+    if (isAddable) {
         titleText = name;
-        actionRow = '<div class="row"><div class="col-xs-12">' + 
-        '<button style="margin-top: 10px;" class="btn btn-block btn-xs btn-primary addable-button" data-id="' + id +'">Add ' + 
-        '<i class="fa fa-spinner fa-spin" style="display:none;" aria-hidden="true"></i></button>' + 
-        '</div></div>'
+        actionRow = '<div class="row"><div class="col-xs-12">' +
+            '<button style="margin-top: 10px;" class="btn btn-block btn-xs btn-primary addable-button" data-id="' + id + '">Add ' +
+            '<i class="fa fa-spinner fa-spin" style="display:none;" aria-hidden="true"></i></button>' +
+            '</div></div>'
+        placementOption = 'left auto'
+        containerOption = 'body'
 
     } else {
         titleText = '<a href="/show/' + id + '">' + name + '</a>';
     }
 
-
-    // if (source == 'this week')
-    // {
-    //     // only shows from this week section of the index.html page
-
-    // }
-    // else {
-    //     // this is for shows that are on the popular or premier section
-    // }
     var img = new Image();
     img.src = poster;
 
     $(element).popover({
         container: 'body',
-        placement: 'top',
+        placement: placementOption,
         trigger: 'manual',
         html: true,
         delay: {
@@ -42,23 +38,33 @@ function SetupTVPopover(e) {
         },
         title: titleText,
         content: '<div class="row"><div class="col-xs-3">' +
-            '<img class="img-responsive img-rounded" src="' + poster + '"></div>' +
-            '<div class="col-xs-9"><p>' + overview + '</p></div></div>' + actionRow
-    }).on("mouseenter", function () {
+        '<img class="img-responsive img-rounded" src="' + poster + '"></div>' +
+        '<div class="col-xs-9"><p>' + overview + '</p></div></div>' + actionRow
+    }).on('click', function () {
         var _this = this;
         $(this).popover("show");
         $('.popover').find('.addable-button').click(OnShowAddClick)
-        $(".popover").on("mouseleave", function () {
-            $(_this).popover('hide');
+        $(".popover").add(_this).on("mouseleave", function () {
+            setTimeout(function () {
+                if (!$(".popover:hover").length) {
+                    $(_this).closest('.row-scroll-section').removeClass('addable-popover');
+                    $(_this).popover("hide");
+                    $('popover').find('.addable-button').off('click', OnShowAddClick)
+                }
+            }, 300)            
         });
-    }).on("mouseleave", function () {
-        var _this = this;
-        $('popover').find('.addable-button').off('click', OnShowAddClick)
-        setTimeout(function () {
-            if (!$(".popover:hover").length) {
-                $(_this).popover("hide");
-            }
-        }, 300);
+        $(_this).closest('.row-scroll-section').addClass('addable-popover');
 
-    });
+    })
+
+    // .on("click", function () {
+    //     var _this = this;
+
+    //     setTimeout(function () {
+    //         if (!$(".popover:hover").length) {
+    //             $(_this).popover("hide");
+    //         }
+    //     }, 300);
+
+    // });
 }

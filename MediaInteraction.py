@@ -172,7 +172,7 @@ def add_addables(db):
 
 def create_addables(shows, type, db):
     for s in shows:
-        poster = '/static/tmdb-stacked.png' if s['poster_path'] is None else s['poster_path']
+        poster = '/static/tmdb-stacked.png' if s['poster_path'] is None else 'http://image.tmdb.org/t/p/w154' + s['poster_path']
         if type == 'premier':
             db_show = PremierShow(name=s['name'],
                                   poster=poster,
@@ -192,5 +192,3 @@ def create_addables(shows, type, db):
         # db_show.id = s['id']
 
         db.add(db_show)
-
-

@@ -114,9 +114,6 @@
                        title="Removes all movies from your view" data-toggle="tooltip">
                         <!--<i class="fa fa-remove" aria-hidden="true"></i> -->
                         Ignore All Movies</a>
-
-                    <!--<a href="https://www.themoviedb.org" target="_blank" class="pull-right tmdb-image"><img-->
-                            <!--style="opacity:.75;" src="/static/tmdb.png" alt="Powered by TMDB"></a>-->
                 </h3>
                 % endif
                 <hr>
@@ -136,17 +133,24 @@
                                data-movie-actors="${m.actors}">${m.title}</a>
                             <div class="movie-action" style="display:inline!important">
                                 |
-                                <a title="Download ${m.title}" data-movie-action="download" data-movie-id="${m.id}" data-contianer="body" data-toggle="tooltip" href="#">
+                                <!--<a title="Download ${m.title}" data-movie-action="download" data-movie-id="${m.id}"-->
+                                   <!--data-contianer="body" data-toggle="tooltip" href="#">-->
+                                    <!--<i class="fa fa-download" aria-hidden="true"></i>-->
+                                <!--</a>-->
+                                <button type="button" class='btn btn-xs btn-primary btn-circle'
+                                        title="Download ${m.title}" data-movie-action="download" data-movie-id="${m.id}"
+                                        data-toggle="tooltip" href="#">
                                     <i class="fa fa-download" aria-hidden="true"></i>
-                                </a>
-
-                                <a title="Remove ${m.title}" data-movie-action="ignore" data-movie-id="${m.id}" data-toggle="tooltip" href="#">
+                                </button>
+                                <button type="button" class='btn btn-xs btn-primary btn-circle'
+                                        title="Remove ${m.title}" data-movie-action="ignore" data-movie-id="${m.id}"
+                                        data-toggle="tooltip" href="#">
                                     <i class="fa fa-trash" aria-hidden="true"></i>
-                                </a>
+                                </button>
                             </div>
-                            <div style="display:inline!important;">
-                                <i class="fa fa-spinner fa-spin" style="display:none;" aria-hidden="true"></i>
-                                <p class="movie-action-label"></p>
+                            <div class="movie-action-label" style="display:none;">
+                                <span style="display:inline;"></span>
+                                <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
                             </div>
                         </h5>
                         <p class="movie-description">${m.overview}</p>
@@ -210,6 +214,7 @@
 </body>
 <script type="text/javascript">
     $(document).ready(function(){
+        PNotify.prototype.options.styling = "fontawesome";
         $('[data-toggle="tooltip"]').tooltip();
         $('.row-scroll-section').niceScroll({
             horizrailenabled: false
@@ -220,7 +225,7 @@
 
         HandleSearchAndAdd();
 
-        $('.movie-action a').click(OnActionClick);
+        $('.movie-action .btn').click(HandleMovieAction);
     });
 
 

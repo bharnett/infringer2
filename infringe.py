@@ -297,8 +297,8 @@ class Infringer(object):
         ar = AjaxResponse('Movie downloading...')
         try:
             data = cherrypy.request.json
-            movie_id = data['id']
-            action = data['action']
+            movie_id = data['movie_id']
+            action = data['movie_action']
             config = cherrypy.request.db.query(Config).first()
             if action == 'cleanup':
                 cherrypy.request.db.query(Movie).filter(Movie.status == 'Ignored').delete()
@@ -314,10 +314,14 @@ class Infringer(object):
                     ActionLog.log('"%s\'s" .crawljob file created.' % m.name)
                     m.status = 'Retrieved'
                 cherrypy.request.db.commit()
+        except FileExistsError as no_file_ex:
+            ActionLog.log('error - ' + str(no_file_ex))
+            ar.status = 'error'
+            ar.message = 'Could not save to "%s" - Check your config.' % config.movies_directory
         except Exception as ex:
             ActionLog.log('error - ' + str(ex))
             ar.status = 'error'
-            ar.message = ex
+            ar.message = str(ex)
 
         return ar.to_JSON()
 
@@ -413,7 +417,7 @@ def startup():
 
     cherrypy.config.update({
         'server.socket_host': config.ip,
-        'server.socket_port': int(config.port),
+        'server.socket_port': 8000  #int(config.port),
     })
     # config_session.remove()
 

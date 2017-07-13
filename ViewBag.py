@@ -21,6 +21,7 @@ class ViewBag(object):
         self.movies = self.db.query(Movie).filter(Movie.status == 'Ready').all()
 
         #get only for this week:
+        #get only for this week:
         today = datetime.date.today()
         dates = [today + datetime.timedelta(days=i) for i in range(-1 - today.weekday(), 6 - today.weekday())]
 
@@ -28,7 +29,7 @@ class ViewBag(object):
             .filter(Episode.air_date <= dates[6]).order_by(Episode.air_date).all()
         self.dates = dates
         #for the movies
-        self.movies = self.db.query(Movie).filter(Movie.status == 'Ready').all()
+        self.movies = self.db.query(Movie).filter(Movie.status == 'Ready').order_by(Movie.id.desc()).all()
         self.config = self.db.query(Config).first()
 
         self.jd_link = self.config.jd_link

@@ -1,6 +1,7 @@
 function HandleMovieAction() {
     var action = $(this).data("movie-action");
     var id = $(this).data("movie-id");
+    var button = this
 
     $.ajax({
         url: '/handle_movie',
@@ -11,34 +12,56 @@ function HandleMovieAction() {
         dataType: 'text',
         contentType: 'application/json',
         type: 'POST',
-        beforeSend: function() {
-            //animate and hide action icons
-            //show spinner icon
-        },
-        error: function(req, errorString, ex) {
+        beforeSend: OnActionClick(button),
+        error: function (req, errorString, ex) {
             showStatus(true, errorString);
         },
-        success: function(data) {
+        success: function (data) {
             var ar = $.parseJSON($.parseJSON(data));
-            if (ar.status == 'success') {
-                if (action == 'ignore') {
-                    $(source).closest('tr').remove();
-                } else if (action = 'cleanup') {
-                    location.reload(true);
+            setTimeout(function () {
+                if (ar.status == 'success') {
+                    if (action == 'ignore') {
+                        $(button).closest('.movie-row').slideUp().remove();
+                    } else if (action == 'cleanup') {
+                        location.reload(true);
+                    } else {
+                        var currentRow = $(button).closest('.movie-row');
+                        $(currentRow).find('.movie-action-label span').addClass('text-success').text('Sent to jDownloader');
+                        $(currentRow).find('.fa-spin').addClass('animated zoomOut');
+                        setTimeout(function () {
+                            $(currentRow).slideUp(300, function(){
+                                $(this).remove()
+                            })
+                        }, 1000)
+                    }
                 } else {
-                    var currentRow = $(source).closest('tr');
-                    var newText = $(currentRow).children().first().text() + ' is downloading..';
-                    $(currentRow).children().remove();
-                    $(currentRow).append('<td colspan="3" class="success">' + newText + '</td>');
-                }
-            } else {
-                showStatus(ar.status.toLowerCase() == 'error', ar.message);
-            }
+                    showStatus(ar.status.toLowerCase() == 'error', ar.message);
 
+                }
+            }, 2500)
         }
     })
 }
 
-function OnActionClick() {
-    $(this).closest('.movie-action')
+
+
+function OnActionClick(btn) {
+    var actionButton = btn;
+    var otherButton = $(btn).siblings('.btn').first();
+    var label = $(btn).closest('h5').find('.movie-action-label');
+    var message = $(btn).data('movie-action') == 'download' ? 'Downloading... ' : 'Removing... ';
+
+    $(actionButton).addClass('animated bounceOut').tooltip('destroy');
+    $(otherButton).addClass('animated flipOutX').tooltip('destroy');
+    $(otherButton).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend',
+        function () {
+            $(actionButton).parent().hide();
+            $(label).find('span').text(message);
+            $(label).css('display', 'inline').addClass('animated zoomIn');
+
+        }
+    )
+    setTimeout(function () {
+
+    }, 1000);
 }

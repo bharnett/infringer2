@@ -53,6 +53,7 @@ def process_movie_link(db, link):
             link.text) is None and ('1080p' in link.text or '720p' in link.text):
         # probably movie - no regex and 1080p or 720p so add movie db
         edited_link_text = re.sub('\[?.*\]', '', link.text).strip()
+
         if db.query(Movie).filter(Movie.name == edited_link_text).first() is None:
             m = Movie(name=edited_link_text, link_text=link.get('href'), status='Not Retrieved')
             db.add(m)
@@ -60,6 +61,14 @@ def process_movie_link(db, link):
         return True
     else:
         return False
+
+
+
+
+
+
+
+
 
 
 def get_download_links(soup, config, domain, hd_format='720p'):

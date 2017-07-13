@@ -142,6 +142,9 @@ class Movie(Base):
     overview = Column(String)
     actors = Column(String)
     links = Column(String)
+    video_format = Column(String)
+    audio_format = Column(String)
+    source_format = Column(String)
 
     def get_name_and_year(self):
         release_date_list = re.findall('[\(]?[0-9]{4}[\)]?', self.name)
@@ -154,6 +157,29 @@ class Movie(Base):
             release_date = ''
 
         return s, release_date
+
+    def get_video_formats(self):
+        sources = ['HDTV', 'BluRay', 'WEB-DL']
+        audios = ['DD5.1', '2.0', 'TrueHD', 'DTS', 'DTS-HD']
+
+        if '1080p' in self.name:
+            self.video_format = '1080p'
+        elif '720p' in self.name:
+            self.video_format = '720p'
+        else:
+            self.video_format = 'other'
+
+        source = [s for s in sources if s.lower() in self.name.lower()]
+        if not source:
+            self.source_format = 'other'
+        else:
+            self.source_format = source[0]
+
+        audio = [a for a in audios if a.lower() in self.name.lower()]
+        if not audio:
+            self.audio_format = 'other'
+        else:
+            self.audio_format = audio[0]
 
 
 class ActionLog(Base):
