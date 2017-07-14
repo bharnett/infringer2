@@ -20,6 +20,7 @@ import TvdbInteraction
 import LinkInteraction
 import ViewBag
 import jsonpickle
+import mechanicalsoup
 
 template_dir = os.path.dirname(os.path.normpath(os.path.abspath(__file__))) + '/html'
 my_lookup = TemplateLookup(directories=[template_dir])
@@ -114,14 +115,14 @@ class Infringer(object):
 
     @cherrypy.expose
     def config(self):
-        config_template = my_lookup.get_template('config2.html')
+        config_template = my_lookup.get_template('config.html')
         c = cherrypy.request.db.query(Config).first()
         s = cherrypy.request.db.query(ScanURL).all()
         if c is None:
             c = Config()
             cherrypy.request.db.add(c)
             cherrypy.request.db.commit()
-        return config_template.render(config=c, scanurls=s)
+        return config_template.render(config=c, scanurls=s, jd_link=c.jd_link)
 
     @cherrypy.expose
     @cherrypy.tools.json_in()
@@ -133,26 +134,26 @@ class Infringer(object):
             is_restart = False
             data = cherrypy.request.json
             c = cherrypy.request.db.query(Config).first()
-            c.crawljob_directory = data['crawljob_directory']
-            c.tv_parent_directory = data['tv_parent_directory']
-            c.movies_directory = data['movies_directory']
-            c.file_host_domain = data['file_host_domain']
-            c.hd_format = data['hd_format']
+            c.crawljob_directory = data['crawljob-directory']
+            c.tv_parent_directory = data['tv-parent-directory']
+            c.movies_directory = data['movies-directory']
+            c.file_host_domain = data['file-host-domain']
+            c.hd_format = data['hd-format']
 
             # check for changes that need a reschedule
-            if c.scan_interval != int(data['scan_interval']):
+            if c.scan_interval != int(data['scan-interval']):
                 scan_refresh_scheduler.reschedule_job('scan_job', trigger='cron',
-                                                      hour='*/' + str(data['scan_interval']))
+                                                      hour='*/' + str(data['scan-interval']))
 
-            if c.refresh_day != data['refresh_day'] or c.refresh_hour != int(data['refresh_hour']):
-                scan_refresh_scheduler.reschedule_job('refresh_job', trigger='cron', day_of_week=data['refresh_day'],
-                                                      hour=str(data['refresh_hour']))
+            if c.refresh_day != data['refresh-day'] or c.refresh_hour != int(data['refresh-hour']):
+                scan_refresh_scheduler.reschedule_job('refresh-job', trigger='cron', day_of_week=data['refresh-day'],
+                                                      hour=str(data['refresh-hour']))
 
-            c.scan_interval = data['scan_interval']
-            c.refresh_day = data['refresh_day']
-            c.refresh_hour = data['refresh_hour']
-            c.jd_link = data['jd_link']
-            c.jd_path = data['jd_path']
+            c.scan_interval = data['scan-interval']
+            c.refresh_day = data['refresh-day']
+            c.refresh_hour = data['refresh-hour']
+            c.jd_link = data['jd-link']
+            c.jd_path = data['jd-path']
             #
             # if 'jdownloader_restart' in data:
             #     c.jdownloader_restart = True if data['jdownloader_restart'] == 'on' else False
@@ -187,19 +188,27 @@ class Infringer(object):
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def config_dirs(self, crawljob_directory='', tv_parent_directory='', movies_directory=''):
+    def config_dirs(self, **kwargs):
         try:
-            if crawljob_directory != '':
-                test_string = crawljob_directory
-            elif tv_parent_directory != '':
-                test_string = tv_parent_directory
-            else:
-                test_string = movies_directory
+            test_string = [elem for elem in kwargs.values()][0]
             validation_response = os.path.isdir(test_string)
         except Exception as ex:
             validation_response = False
 
         return validation_response
+
+    @cherrypy.expose
+    def forums(self):
+        forums_template = my_lookup.get_template('forums.html')
+        data = cherrypy.request.db.query(ScanURL).all()
+        config = cherrypy.request.db.query(Config).first()
+
+        b = mechanicalsoup.Browser()
+        page = b.get(data[0].domain)
+        is_page_up = page.status_code in [200, 403]
+
+
+        return forums_template.render(sources=data, jd_link=config.jd_link, forum_status=is_page_up)
 
 
     @cherrypy.expose
@@ -218,13 +227,14 @@ class Infringer(object):
                 u = cherrypy.request.db.query(ScanURL).filter(ScanURL.id == data['id']).first()
                 if action == 'update':
                     setattr(u, data['propertyName'], data['propertyValue'])
+                    ar.message = 'Updated %s.' % data['propertyName'].replace('_',' ')
                 elif action == 'delete':
                     ar.message = 'Data source deleted...'
                     cherrypy.request.db.delete(u)
             cherrypy.request.db.commit()
         except Exception as ex:
             ar.status = 'error'
-            ar.message = str(Exception)
+            ar.message = str(ex)
 
         return ar.to_JSON()
 
@@ -325,54 +335,6 @@ class Infringer(object):
 
         return ar.to_JSON()
 
-    @cherrypy.expose
-    @cherrypy.tools.json_in()
-    @cherrypy.tools.json_out()
-    def movie_details(self, movie_id):
-        status = 'success'
-        try:
-            # data = cherrypy.request.json
-            # db = models.connect()
-            m = cherrypy.request.db.query(Movie).filter(Movie.id == movie_id).first()
-            omdb_api_link = m.get_IMDB_link()
-            parsed = urllib.parse.urlparse(omdb_api_link)
-            urllib.parse.urlparse(parsed.query)
-            movie_name = urllib.parse.parse_qs(parsed.query)['t'][0].replace('+',
-                                                                             ' ')  # get the real movie name to use later
-            release_year = urllib.parse.parse_qs(parsed.query)['y'][0]
-            mdb_url_param = '%s' % (urllib.parse.quote_plus(movie_name))
-            mdb_link = 'https://api.themoviedb.org/3/search/movie?query=%s&year=%s&api_key=79f408a7da4bdb446799cb45bbb43e7b' % (
-                mdb_url_param, release_year)
-            mdb_response = urllib.request.urlopen(mdb_link)
-            mdb_json = mdb_response.read()
-            mdb_json_string = bytes.decode(mdb_json)
-            mdb_data = json.loads(mdb_json_string)
-            ombdapi_resp = urllib.request.urlopen(omdb_api_link)
-            ombdapi_json = json.loads(bytes.decode(ombdapi_resp.read()))
-
-            # set default
-            new_img = 'http://146990c1ab4c59b8bbd0-13f1a0753bafdde5bf7ad71d7d5a2da6.r94.cf1.rackcdn.com/techdiff.jpg'
-            try:
-                if len(mdb_data['results']) == 1:
-                    new_img = 'http://image.tmdb.org/t/p/w154' + mdb_data['results'][0]['poster_path']
-
-                elif len(mdb_data['results']) > 0:  # find the correct image by name and year
-                    for mdb_movie in mdb_data['results']:
-                        if mdb_movie['title'] == movie_name and mdb_movie['release_date'][:4] == release_year:
-                            new_img = 'http://image.tmdb.org/t/p/w154' + mdb_movie['poster_path']
-                            break
-            except Exception as ex:
-                new_img = 'http://146990c1ab4c59b8bbd0-13f1a0753bafdde5bf7ad71d7d5a2da6.r94.cf1.rackcdn.com/techdiff.jpg'
-
-            ombdapi_json['Poster'] = new_img
-
-            status = ombdapi_json
-
-        except Exception as ex:
-            status = json.dumps('error')
-
-        return status
-
 
     @cherrypy.expose
     def restart(self):
@@ -417,7 +379,7 @@ def startup():
 
     cherrypy.config.update({
         'server.socket_host': config.ip,
-        'server.socket_port': 8000  #int(config.port),
+        'server.socket_port': int(config.port),
     })
     # config_session.remove()
 
@@ -431,8 +393,8 @@ def startup():
     cherrypy.tools.db = Models.SATool()
     cherrypy.tree.mount(Infringer(), '/', conf)
     cherrypy.engine.start()
-    webbrowser.get().open(
-        'http://%s:%s' % (cherrypy.config['server.socket_host'], str(cherrypy.config['server.socket_port'])))
+    # webbrowser.get().open(
+    #     'http://%s:%s' % (cherrypy.config['server.socket_host'], str(cherrypy.config['server.socket_port'])))
     cherrypy.engine.block()
 
 

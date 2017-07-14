@@ -40,7 +40,18 @@
                 <h3>TV This Week</h3>
                 <hr>
             </div>
+
             <div class="row-scroll-section">
+                % if vb.is_no_tv:
+                <blockquote>
+                    <p>No TV shows to scan for yet. Get started by searching for any show above, or selecting a popular
+                        show
+                        from the list to the right.</p>
+                    <small>Once your done, <a data-admin="scan" class="admin" href="#">click here.</a> to scan the web for some immediate gratification.
+                    </small>
+                </blockquote>
+                % else:
+
                 <table class="tv-table table">
                     <thead>
                     <tr>
@@ -74,6 +85,7 @@
 
                     </tbody>
                 </table>
+                % endif
             </div>
         </div>
         <div class="col-md-3 row-section addable-section" id="premier-section">
@@ -119,6 +131,16 @@
                 <hr>
             </div>
             <div class="row-scroll-section">
+                % if len(vb.movies) == 0:
+                <blockquote>
+                    <p>No movies yet.  Either you've cleared your list, or no new titles have been found recently.</p>
+                    <small>To cleanup your movie data, click <a class="movie-cleanup" href="#">here</a>.  If you want to start a new scan
+                    <a data-admin="scan" class="admin" href="#">click here.</a></small>
+                </blockquote>
+
+                % endif
+
+
                 % for m in vb.movies:
                 <div class="row movie-row">
                     <div>
@@ -226,6 +248,7 @@
         HandleSearchAndAdd();
 
         $('.movie-action .btn').click(HandleMovieAction);
+        $('#ignore-all-button').click(OnIgnoreAllClick);
     });
 
 

@@ -119,11 +119,9 @@ class ScanURL(Base):
     password = Column(String, default='mypassword')
     login_page = Column(String, default='http://tehparadox.com/forum/')  # 'http://tehparadox.com/forum/'
     url = Column(String, default='myurl')
-    media_type = Column(String, default='both')  # can be tv, movies, or both
     priority = Column(Integer, nullable=True)
-    link_select = Column(String, default='a')
-    max_search_links = Column(Integer, default=300)
     domain = Column(String, default='http://www.domain.com/')
+    logo_image = Column(String, default='/static/forum.png')
 
     def __str__(self):
         return self.domain

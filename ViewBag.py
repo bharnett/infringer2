@@ -14,6 +14,7 @@ class ViewBag(object):
         self.jd_link = ''
         self.dates =[]
         self.config = None;
+        self.is_no_tv = False
 
     def populate_addables(self):
         self.premiers = self.db.query(PremierShow).all()
@@ -31,6 +32,7 @@ class ViewBag(object):
         #for the movies
         self.movies = self.db.query(Movie).filter(Movie.status == 'Ready').order_by(Movie.id.desc()).all()
         self.config = self.db.query(Config).first()
+        self.is_no_tv = len(self.db.query(Show).all()) == 0
 
         self.jd_link = self.config.jd_link
 

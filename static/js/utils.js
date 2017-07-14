@@ -1,6 +1,6 @@
 
 function showStatus(isError, message) {
-    PNotify.prototype.options.styling = 'bootstrap3';
+    PNotify.prototype.options.styling = 'fontawesome';
     new PNotify({
         title: isError ? 'Error' : 'Success',
         text: message,

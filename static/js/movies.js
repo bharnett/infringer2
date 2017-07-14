@@ -65,3 +65,15 @@ function OnActionClick(btn) {
 
     }, 1000);
 }
+
+function OnIgnoreAllClick()
+{
+    movies = $('.movie-row')
+    $.each(movies, function(i, e){
+        $(e).find('[data-movie-action="ignore"]').click();
+    })
+
+    $(this).hide();
+    //show block quote
+}
+

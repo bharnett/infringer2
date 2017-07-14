@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Forum Media Sources</title>
+    <%include file="base.html"/>
+
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"
+            type="text/javascript"></script>
+    <script src="/static/js/validation_extentions.js" type="text/javascript"></script>
+    <style type="text/css">
+        .small-error {
+            color: #a94442;
+            font-size: 10px
+        }
+
+
+
+
+    </style>
+
+
+</head>
+<body>
+<%include file="nav.html"/>
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <form id="forum-form">
+
+
+                % for s in sources:
+                <div class="panel panel-default" data-forum-id="${s.id}" >
+                    <div class="panel-heading">
+                        <%
+                        title = s.domain.split('/')[2].split('.')[1]
+
+                        %>
+                        <strong>${title}</strong> (${s.id})
+                        <span class="label label-success">Online</span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label for="domain">Domain</label>
+                            <input type="hidden" value="${s.id}" id="id" name="id">
+                            <input type="text" class="form-control input-sm" id="domain" name="domain"
+                                   value="${s.domain}">
+                        </div>
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control input-sm" id="username" name="username"
+                                   value="${s.username}">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="text" class="form-control input-sm" id="password" name="password"
+                                   value="${s.password}">
+                        </div>
+                        <div class="form-group">
+                            <label for="login_page">Login Page</label>
+                            <input type="text" class="form-control input-sm" id="login_page" name="login_page"
+                                   value="${s.login_page}">
+                        </div>
+                        <div class="form-group">
+                            <label for="url">Scan URL</label>
+                            <input type="text" class="form-control input-sm" id="url" name="url" value="${s.url}">
+                        </div>
+                    </div>
+                </div>
+                % endfor
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+
+   $(document).ready(function(){
+        $('#nav-forums-link').addClass('active');
+
+        $('#forum-form input').change(function(){
+            if ($(this).valid())
+            {
+                updateDataSource(this)
+            }
+        })
+
+    $('#forum-form').validate({
+                highlight: function (element) {
+                    $(element).closest('.form-group').addClass("has-error");
+                },
+                unhighlight: function (element) {
+                    $(element).closest('.form-group').removeClass("has-error");
+                },
+                errorClass: 'small-error',
+                rules: {
+                    domain: {
+                        required: true,
+                        url: true
+                    },
+                    username: 'required',
+                    password: 'required',
+                    login_page: {
+                        required: true,
+                        url: true
+                    },
+                    url: {
+                        required: true,
+                        url: true
+                    },
+                },
+                submitHandler: function (form) {
+                    return false;
+                }
+            });
+   });
+
+   function updateDataSource(e) {
+        var row = $(e).closest('.panel')
+        var id = $(row).data('forum-id');
+        var propertyName = $(e).attr('id');
+        var propertyValue = $(e).val();
+        var action = 'update'
+        if ($(e).hasClass('deleter')) action = 'delete';
+        if ($(e).hasClass('adder')) action = 'add';
+
+        data = {id: id, propertyName: propertyName, propertyValue: propertyValue, action: action};
+        $.ajax({
+            url: '/update_scanurl',
+            type: 'POST',
+            data: JSON.stringify(data),
+            dataType: 'text',
+            contentType: 'application/json',
+            error: function (jqXHR, textStatus, errorThrown) {
+                showStatus(true, textStatus + ' ' + errorThrown);
+            },
+            success: function (data) {
+                var ar = $.parseJSON($.parseJSON(data));
+                showStatus(ar.status == 'error', ar.message);
+                if (action == 'delete') {
+                    $(row).remove();
+                }
+                else if (action == 'add') {
+                    window.location.reload(true);
+                }
+            }
+        })
+        }
+
+
+</script>
+</html>
