@@ -1,4 +1,5 @@
 /*this is just section and layouts html,*/
+
 html,
 body {
     height: 100%;
@@ -25,6 +26,7 @@ body {
     overflow-y: scroll;
     overflow-x: hidden;
 }
+
 
 /*specifics around elements & margins */
 
@@ -55,6 +57,7 @@ body {
 
 
 /* movie section */
+
 .movie-thumb {
     max-height: 100px;
 }
@@ -72,7 +75,7 @@ body {
 
 .movie-column h5 {
     margin-top: 0px;
-    height: 22px;  
+    height: 22px;
     /*this is to account for the height of the buttons when they are removed*/
 }
 
@@ -80,16 +83,12 @@ body {
     margin-top: 27px;
 }
 
+.movie-column .btn-circle:focus {
+    outline: none;
+}
+
 
 /*misc stuff */
-
-.tmdb-image img {
-    max-height: 30px;
-}
-
-.tmdb-image {
-    margin-top: 5px;
-}
 
 .pb {
     curosor: pointer;
@@ -99,6 +98,3 @@ body {
     max-width: 500px;
 }
 
-.btn-circle {
-    border-radius: 50%
-}

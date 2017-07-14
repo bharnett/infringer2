@@ -28,28 +28,28 @@ scan_refresh_scheduler = BackgroundScheduler()
 
 
 class Infringer(object):
-    @cherrypy.expose
-    def index(self):
-        config = cherrypy.request.db.query(Config).first()
-        if not config.is_populated():
-            raise cherrypy.HTTPRedirect("/config")
-        else:
-            index_template = my_lookup.get_template('index.html')
-            upcoming_episodes = cherrypy.request.db.query(Episode).filter(Episode.air_date != None).filter(
-                Episode.status == 'Pending').order_by(Episode.air_date)[:25]
-            index_shows = cherrypy.request.db.query(Show).order_by(Show.show_name)
-            index_movies = cherrypy.request.db.query(Movie).filter(Movie.status == 'Ready').all()
-            downloaded_shows = cherrypy.request.db.query(Episode).filter(Episode.retrieved_on is not None).order_by(
-                Episode.retrieved_on.desc())[:50]
-            return index_template.render(shows=index_shows, movies=index_movies, upcoming=upcoming_episodes,
-                                         downloaded=downloaded_shows, jd_link=config.jd_link)
+    # @cherrypy.expose
+    # def index(self):
+    #     config = cherrypy.request.db.query(Config).first()
+    #     if not config.is_populated():
+    #         raise cherrypy.HTTPRedirect("/config")
+    #     else:
+    #         index_template = my_lookup.get_template('index.html')
+    #         upcoming_episodes = cherrypy.request.db.query(Episode).filter(Episode.air_date != None).filter(
+    #             Episode.status == 'Pending').order_by(Episode.air_date)[:25]
+    #         index_shows = cherrypy.request.db.query(Show).order_by(Show.show_name)
+    #         index_movies = cherrypy.request.db.query(Movie).filter(Movie.status == 'Ready').all()
+    #         downloaded_shows = cherrypy.request.db.query(Episode).filter(Episode.retrieved_on is not None).order_by(
+    #             Episode.retrieved_on.desc())[:50]
+    #         return index_template.render(shows=index_shows, movies=index_movies, upcoming=upcoming_episodes,
+    #                                      downloaded=downloaded_shows, jd_link=config.jd_link)
 
     @cherrypy.expose
-    def new_index(self):
-            new_index_template = my_lookup.get_template('new_index.html')
-            vb = ViewBag.ViewBag()
-            vb.populate_addables()
-            return new_index_template.render(vb=vb, jd_link=vb.jd_link)
+    def index(self):
+        index_template = my_lookup.get_template('index.html')
+        vb = ViewBag.ViewBag()
+        vb.populate_addables()
+        return index_template.render(vb=vb, jd_link=vb.jd_link)
 
     @cherrypy.expose
     def show(self, show_id):
@@ -114,7 +114,7 @@ class Infringer(object):
 
     @cherrypy.expose
     def config(self):
-        config_template = my_lookup.get_template('config.html')
+        config_template = my_lookup.get_template('config2.html')
         c = cherrypy.request.db.query(Config).first()
         s = cherrypy.request.db.query(ScanURL).all()
         if c is None:

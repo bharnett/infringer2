@@ -1,0 +1,11 @@
+.tmdb-image img {
+    max-height: 30px;
+}
+
+.tmdb-image {
+    margin-top: 5px;
+}
+
+.btn-circle {
+    border-radius: 50%
+}
