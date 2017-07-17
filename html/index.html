@@ -166,12 +166,12 @@
                                 <!--</a>-->
                                 <button type="button" class='btn btn-xs btn-primary btn-circle'
                                         title="Download ${m.title}" data-movie-action="download" data-movie-id="${m.id}"
-                                        data-toggle="tooltip" href="#">
+                                        data-toggle="tooltip" data-container="body" href="#">
                                     <i class="fa fa-download" aria-hidden="true"></i>
                                 </button>
                                 <button type="button" class='btn btn-xs btn-primary btn-circle'
                                         title="Remove ${m.title}" data-movie-action="ignore" data-movie-id="${m.id}"
-                                        data-toggle="tooltip" href="#">
+                                        data-toggle="tooltip" data-container="body" href="#">
                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                 </button>
                             </div>
@@ -199,10 +199,28 @@
                             rating_class = 'label label-' + rating_class
                         %>
 
-                        <p class="rating">
+                        <p>
                             <strong>Rating: </strong>
                             <span class="${rating_class}">${rating}</span>
-                            <span class="label label-default">${m.video_format}</span></p>
+                        </p>
+                        <p>
+                            <strong data-toggle="tooltip" data-container="body" data-title="${m.link_text}">Format: </strong>
+                            <span class="label label-default">${m.video_format}</span>
+                            <span class="label label-default">${m.audio_format}</span>
+                            <span class="label label-default">${m.source_format}</span>
+                        </p>
+                        <!--<div class="rating clearfix">-->
+                            <!--<div class="pull-left">-->
+                                <!--<strong>Rating: </strong>-->
+                                <!--<span class="${rating_class}">${rating}</span>-->
+                            <!--</div>-->
+                            <!--<div class="pull-right">-->
+                                <!--<span class="label label-default">${m.video_format}</span>-->
+                                <!--<span class="label label-default">${m.audio_format}</span>-->
+                                <!--<span class="label label-default">${m.source_format}</span>-->
+                            <!--</div>-->
+                        <!--</div>-->
+
 
                         <p><strong>Cast: </strong>${m.actors}</p>
                     </div>

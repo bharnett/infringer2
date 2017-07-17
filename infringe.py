@@ -65,7 +65,7 @@ class Infringer(object):
         shows_template = my_lookup.get_template('shows.html')
         all_shows = cherrypy.request.db.query(Show).order_by(Show.show_name.desc()).all()
         if show_id == 0:
-            latest_episode = cherrypy.request.db.query(Episode).filter(Episode.air_date <= datetime.date().today())\
+            latest_episode = cherrypy.request.db.query(Episode).filter(Episode.air_date <= datetime.today())\
                 .order_by(Episode.air_date.desc()).first()
             current_show = latest_episode.show
         else:
@@ -416,7 +416,7 @@ def startup():
 
     cherrypy.config.update({
         'server.socket_host': config.ip,
-        'server.socket_port': int(config.port),
+        'server.socket_port': 3000 #int(config.port),
     })
     # config_session.remove()
 

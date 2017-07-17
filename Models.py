@@ -158,27 +158,29 @@ class Movie(Base):
         return s, release_date
 
     def get_video_formats(self):
-        sources = ['HDTV', 'BluRay', 'WEB-DL']
-        audios = ['DD5.1', '2.0', 'TrueHD', 'DTS', 'DTS-HD']
+        source_formats = {'HDTV': 'HDTV', 'HD-TV':'HDTV', 'Bluray': 'BluRay', 'DVD': 'DVD', 'WEB-DL': 'WEB-DL',
+                          'WEB DL':'WEB-DL', 'WEBDL': 'WEB-DL'}
+        audio_formats = {'DD5': 'DD5.1', 'DD': 'DD5.1', 'AAC2': 'AAC2.0', 'AAC': 'AAC2.0', 'DTS HD': 'DTS-HD',
+                         'DTS-HD':'DTS-HD', 'DTS': 'DTS', 'TrueHD':'TrueHD'}
 
         if '1080p' in self.name:
             self.video_format = '1080p'
         elif '720p' in self.name:
             self.video_format = '720p'
         else:
-            self.video_format = 'other'
+            self.video_format = 'other res'
 
-        source = [s for s in sources if s.lower() in self.name.lower()]
+        source = {k: v for k,v in source_formats.items() if k.lower() in self.name.lower()}
         if not source:
-            self.source_format = 'other'
+            self.source_format = 'other source'
         else:
-            self.source_format = source[0]
+            self.source_format = next(iter(source.values()))
 
-        audio = [a for a in audios if a.lower() in self.name.lower()]
+        audio = {k: v for k,v in audio_formats.items() if k.lower() in self.name.lower()}
         if not audio:
-            self.audio_format = 'other'
+            self.audio_format = 'other audio'
         else:
-            self.audio_format = audio[0]
+            self.audio_format = next(iter(audio.values()))
 
 
 class ActionLog(Base):
