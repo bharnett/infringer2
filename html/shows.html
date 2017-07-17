@@ -4,14 +4,26 @@
     <meta charset="UTF-8">
     <title>Shows</title>
     <%include file="base.html"/>
+    <script type="text/javascript" src="/static/js/shows.js"></script>
     <style type="text/css">
+        html,
+body {
+    height: 100%;
+}
+
         html {
-          background: url(images/bg.jpg) no-repeat center center fixed;
+
+          background: url(https://image.tmdb.org/t/p/original/cCDuZqLv6jwnf3cZZq7g3uNLaIu.jpg) no-repeat center center fixed;
           -webkit-background-size: cover;
           -moz-background-size: cover;
           -o-background-size: cover;
           background-size: cover;
         }
+
+        body {
+            background-color: '';
+        }
+
 
     </style>
 
@@ -29,7 +41,7 @@
                 <ul class="list-group">
                     % for s in shows:
                     <li class="list-group-item">
-                        <a href="#" data-id="${s.show_id}">${s.show_name}</a>
+                        <a href="#" class="show-link" data-id="${s.show_id}">${s.show_name}</a>
                     </li>
                     % endfor
                 </ul>
@@ -39,15 +51,15 @@
         <div class="col-md-9">
             <div>
                 <h3 class="show-name"></h3>
-                <div style="display:inline">
-                    <button style="btn btn-primary btn-sm btn-circle" data-toggle="tooltip" data-title="">
+                <div class="display:inline">
+                    <button class="btn btn-primary btn-sm btn-circle" data-toggle="tooltip" data-title="">
                         <i class="fa fa-trash" aria-hidden="true"></i>
                     </button>
-                    <button style="btn btn-primary btn-sm btn-circle" data-toggle="tooltip"
+                    <button class="btn btn-primary btn-sm btn-circle" data-toggle="tooltip"
                             data-title="">
                         <i class="fa fa-refresh" aria-hidden="true"></i>
                     </button>
-                    <button style="btn btn-primary btn-sm btn-circle">Set all to 'pending'</button>
+                    <button class="btn btn-warning btn-sm float-right">Set all to 'pending'</button>
                 </div>
             </div>
             <div>
@@ -83,7 +95,7 @@
 
         //$('#container-fluid').niceScroll();
 
-
+        $('.show-link').click(OnShowClick);
     });
 
 

@@ -51,7 +51,7 @@ class Episode(Base):
     __tablename__ = 'episode'
     id = Column(Integer, primary_key=True)
     show_id = Column(Integer, ForeignKey('show.show_id'))
-    show = relationship(Show, backref=backref('episodes', cascade='delete', lazy='dynamic'))
+    show = relationship(Show, backref=backref('episodes', cascade='delete'))
     season_number = Column(Integer)
     episode_number = Column(Integer)
     episode_name = Column(String)

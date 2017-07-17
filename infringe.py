@@ -21,6 +21,8 @@ import LinkInteraction
 import IndexViewBag
 import jsonpickle
 import mechanicalsoup
+from sqlalchemy.orm import subqueryload
+
 
 template_dir = os.path.dirname(os.path.normpath(os.path.abspath(__file__))) + '/html'
 my_lookup = TemplateLookup(directories=[template_dir])
@@ -77,11 +79,12 @@ class Infringer(object):
     @cherrypy.tools.json_out()
     def show(self, id):
         try:
-            show = cherrypy.request.db.query(Show).filter(Show.show_id == id).first();
+            show = cherrypy.request.db.query(Show).options(subqueryload(Show.episodes)).filter(Show.show_id == id).first()
         except Exception as ex:
             search_results = "{error: %s}" % Exception
 
-        return jsonpickle.encode(show)  # json.dumps(search_results)
+        return jsonpickle.encode(show, max_depth=4, unpicklable=False)  # json.dumps(search_results)
+
 
 
     @cherrypy.expose
