@@ -4,7 +4,7 @@ import datetime
 from sqlalchemy import func
 
 
-class ViewBag(object):
+class IndexViewBag(object):
     def __init__(self):
         self.premiers = []
         self.popular = []

@@ -63,11 +63,12 @@ class Search(object):
         # of a given episode (show name) and episode code.
         link_text = link.text.lower().strip()
         if link.text != '':
-            if source.media_type in self.movie_types:
                 # check if this is a movie link (regex search)
-                if LinkInteraction.process_movie_link(self.db, link):
-                    return False
-            if source.media_type in self.tv_types:  # search for all shows
+            is_movie = LinkInteraction.process_movie_link(self.db, link)
+
+            if is_movie:
+                return False
+            else:
                 if self.is_completed():  # takes care of 'both' media type sources
                     return False
                 else:

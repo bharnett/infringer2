@@ -14,11 +14,26 @@
             font-size: 10px
         }
 
+        .panel .forum-action {
+            opacity: 0.0;
+            transition: opacity .55s ease-in-out;
+            -moz-transition: opacity .55s ease-in-out;
+            -webkit-transition: opacity .55s ease-in-out;
+        }
 
+        .panel:hover .forum-action {
+            opacity: 1.0;
+            transition: opacity .55s ease-in-out;
+            -moz-transition: opacity .55s ease-in-out;
+            -webkit-transition: opacity .55s ease-in-out;
+        }
+
+        .panel-title .label {
+            transition: width .55s ease-in-out;
+        }
 
 
     </style>
-
 
 </head>
 <body>
@@ -28,18 +43,30 @@
 
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
+            <button class="btn btn-default btn-block forum-action" data-action="add">Add New Forum Source</button>
+            <hr>
+
             <form id="forum-form">
 
 
                 % for s in sources:
                 <div class="panel panel-default" data-forum-id="${s.id}" >
-                    <div class="panel-heading">
+                    <div class="panel-heading clearfix">
                         <%
                         title = s.domain.split('/')[2].split('.')[1]
 
                         %>
-                        <strong>${title}</strong> (${s.id})
-                        <span class="label label-success">Online</span>
+                        <h5 class="panel-title pull-left" style="padding-top: 7.5px">${title} <small>(${s.id})</small>
+                            <div class="label label-default" data-id="${s.id}">
+                                <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
+                                Checking
+                            </div>
+                        </h5>
+                        <button class="btn btn-sm btn-warning btn-circle pull-right forum-action" data-id="${s.id}" data-action="delete" data-toggle="tooltip" data-title="Remove data source">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </button>
+
+
                     </div>
                     <div class="panel-body">
                         <div class="form-group">
@@ -78,6 +105,8 @@
 <script type="text/javascript">
 
    $(document).ready(function(){
+        Globals();
+
         $('#nav-forums-link').addClass('active');
 
         $('#forum-form input').change(function(){
@@ -86,6 +115,41 @@
                 updateDataSource(this)
             }
         })
+
+        $('body').keypress(function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                $("#btn_showSearch").click();
+            }
+        });
+
+
+        $('.forum-action').click(function(){
+            updateDataSource(this);
+        });
+
+        $('.panel .label').each(function(i, e){
+            $(e).text('Checking')
+            $(e).addClass('label-default').removeClass('label-success label-warning');
+            $(e).find('i').show();
+            $.get('/forum_check',
+                {id: $(this).data('id')},
+                function(data){
+                $(e).find('i').hide()
+                if (data)
+                {
+                    $(e).text('Online');
+                    $(e).addClass('label-success').removeClass('label-warning');
+                }
+                else {
+                    $(e).text('Offline');
+                    $(e).addClass('label-warning').removeClass('label-success');
+
+                }
+
+
+            });
+        });
 
     $('#forum-form').validate({
                 highlight: function (element) {
@@ -123,8 +187,10 @@
         var propertyName = $(e).attr('id');
         var propertyValue = $(e).val();
         var action = 'update'
-        if ($(e).hasClass('deleter')) action = 'delete';
-        if ($(e).hasClass('adder')) action = 'add';
+        if ($(e).hasClass('forum-action')) {
+            action = $(e).data('action');
+        }
+
 
         data = {id: id, propertyName: propertyName, propertyValue: propertyValue, action: action};
         $.ajax({

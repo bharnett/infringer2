@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shows</title>
+    <%include file="base.html"/>
+    <style type="text/css">
+        html {
+          background: url(images/bg.jpg) no-repeat center center fixed;
+          -webkit-background-size: cover;
+          -moz-background-size: cover;
+          -o-background-size: cover;
+          background-size: cover;
+        }
+
+    </style>
+
+</head>
+<body>
+<%include file="nav.html"/>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <div>
+                <h4>Your Shows</h4>
+            </div>
+            <div>
+                <ul class="list-group">
+                    % for s in shows:
+                    <li class="list-group-item">
+                        <a href="#" data-id="${s.id}">${s.show_name}</a>
+                    </li>
+                    % endfor
+                </ul>
+            </div>
+
+        </div>
+        <div class="col-md-9">
+            <div>
+                <h3 class="show-name"></h3>
+                <div style="display:inline">
+                    <button style="btn btn-primary btn-sm btn-circle" data-toggle="tooltip" data-title="">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                    </button>
+                    <button style="btn btn-primary btn-sm btn-circle" data-toggle="tooltip"
+                            data-title="">
+                        <i class="fa fa-refresh" aria-hidden="true"></i>
+                    </button>
+                    <button style="btn btn-primary btn-sm btn-circle">Set all to 'pending'</button>
+                </div>
+            </div>
+            <div>
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>
+                            Episode Name
+                        </th>
+                        <th>Air Date</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</body>
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        Globals();
+        $('#nav-shows-link').addClass('active');
+
+
+        //$('#container-fluid').niceScroll();
+
+
+    });
+
+
+
+
+
+</script>
+</html>

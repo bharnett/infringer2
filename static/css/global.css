@@ -9,3 +9,13 @@
 .btn-circle {
     border-radius: 50%
 }
+
+.disabled_link {
+    pointer-events: none;
+}
+
+#scan-status {
+    transition: opacity .55s ease-in-out;
+    -moz-transition: opacity .55s ease-in-out;
+    -webkit-transition: opacity .55s ease-in-out;
+}

@@ -18,7 +18,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import MediaInteraction
 import TvdbInteraction
 import LinkInteraction
-import ViewBag
+import IndexViewBag
 import jsonpickle
 import mechanicalsoup
 
@@ -48,17 +48,41 @@ class Infringer(object):
     @cherrypy.expose
     def index(self):
         index_template = my_lookup.get_template('index.html')
-        vb = ViewBag.ViewBag()
+        vb = IndexViewBag.IndexViewBag()
         vb.populate_addables()
         return index_template.render(vb=vb, jd_link=vb.jd_link)
 
+    # @cherrypy.expose
+    # def show(self, show_id):
+    #     show_template = my_lookup.get_template('show.html')
+    #     current_show = cherrypy.request.db.query(Show).filter(Show.show_id == show_id).first()
+    #     current_episodes = current_show.episodes.order_by(Episode.season_number.desc()).order_by(
+    #         Episode.episode_number.desc()).all()
+    #     return show_template.render(show=current_show, episodes=current_episodes)
+
     @cherrypy.expose
-    def show(self, show_id):
-        show_template = my_lookup.get_template('show.html')
-        current_show = cherrypy.request.db.query(Show).filter(Show.show_id == show_id).first()
-        current_episodes = current_show.episodes.order_by(Episode.season_number.desc()).order_by(
-            Episode.episode_number.desc()).all()
-        return show_template.render(show=current_show, episodes=current_episodes)
+    def shows(self, show_id=0):
+        shows_template = my_lookup.get_template('shows.html')
+        all_shows = cherrypy.request.db.query(Show).order_by(Show.show_name.desc()).all()
+        if show_id == 0:
+            latest_episode = cherrypy.request.db.query(Episode).filter(Episode.air_date <= datetime.date().today())\
+                .order_by(Episode.air_date.desc()).first()
+            current_show = latest_episode.show
+        else:
+            current_show = cherrypy.request.db.query(Show).filter(Show.show_id == show_id).first()
+        return shows_template.render(shows=all_shows, current=current_show)
+
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def show(self, id):
+        try:
+            show = cherrypy.request.db.query(Show).filter(Show.show_id == id).first();
+        except Exception as ex:
+            search_results = "{error: %s}" % Exception
+
+        return jsonpickle.encode(show)  # json.dumps(search_results)
+
 
     @cherrypy.expose
     @cherrypy.tools.json_in()
@@ -203,12 +227,27 @@ class Infringer(object):
         data = cherrypy.request.db.query(ScanURL).all()
         config = cherrypy.request.db.query(Config).first()
 
-        b = mechanicalsoup.Browser()
-        page = b.get(data[0].domain)
-        is_page_up = page.status_code in [200, 403]
 
 
-        return forums_template.render(sources=data, jd_link=config.jd_link, forum_status=is_page_up)
+        # b = mechanicalsoup.Browser()
+        # page = b.get(data[0].domain)
+        # is_page_up = page.status_code in [200, 403]
+
+
+        return forums_template.render(sources=data, jd_link=config.jd_link)
+
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def forum_check(self, id):
+        try:
+            forum = cherrypy.request.db.query(ScanURL).filter(ScanURL.id == id).first()
+            b = mechanicalsoup.Browser()
+            page = b.get(forum.domain)
+            is_page_up = page.status_code in [200, 403]
+        except Exception as ex:
+            is_page_up = False
+        return is_page_up
 
 
     @cherrypy.expose
@@ -285,15 +324,13 @@ class Infringer(object):
         status = 'success'
         try:
             data = cherrypy.request.json
-            is_show_refresh = data['isshowrefresh']
-            is_scan = data['isscan']
+            action = data['action']
 
-            if is_scan:
+            if action == 'scan':
                 LinkRetrieve.search_sites(cherrypy.request.db)
 
-            if is_show_refresh:
-                Utils.update_all()
-
+            if action == 'refresh':
+                MediaInteraction.update_all(cherrypy.request.db)
         except Exception as ex:
             ActionLog.log(ex)
             status = 'error'

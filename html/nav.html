@@ -1,57 +1,68 @@
 <nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="/index">
-          <img alt="Infringer" src="/static/favicon.ico">
-      </a>
-    </div>
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/index">
+                <img alt="Infringer" src="/static/favicon.ico">
+            </a>
+        </div>
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Shows <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">Pending Download</a></li>
-            <li><a href="#">Download History</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">All Shows</a></li>
-          </ul>
-        </li>
-          <li><a data-admin="scan" class="admin" href="#">Scan</a></li>
-          <li><a data-admin="refresh" class="admin" href="#">Refresh Shows</a></li>
-          <li id="nav-config-link"><a href="/config">Config</a></li>
-          <li id="nav-forum-link"><a href="/forums">Forum Sources</a></li>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li id="nav-shows-link" class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">Shows <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Pending Download</a></li>
+                        <li><a href="#">Download History</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="/shows">All Shows</a></li>
+                    </ul>
+                </li>
+                <li><a data-admin="scan" class="admin" href="#">Scan</a></li>
+                <li><a data-admin="refresh" class="admin" href="#">Refresh Shows</a></li>
+                <li id="nav-config-link"><a href="/config">Config</a></li>
+                <li id="nav-forum-link"><a href="/forums">Forum Sources</a></li>
 
-          % if jd_link:
-          <li><a href="${jd_link}" target="_blank">jDownloader <i class="fa fa-external-link" aria-hidden="true"></i></a>
-          </li>
-          % endif
-      </ul>
+                % if jd_link:
+                <li><a href="${jd_link}" target="_blank">jDownloader <i class="fa fa-external-link"
+                                                                        aria-hidden="true"></i></a>
+                </li>
+                % endif
+                <li id="scan-status" style="margin-top: 10px; opacity: 0.0">
+                    <div class="label label-info">
+                        <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
+                        <span>Scanning...</span>
+                    </div>
+                </li>
 
-      <ul class="nav navbar-nav navbar-right">
-        <a href="https://www.themoviedb.org" target="_blank" class="pull-right tmdb-image"><img
-                            style="opacity:.75;" src="/static/tmdb.png" alt="Powered by TMDB"></a>
+            </ul>
 
-        <!--<li><a href="#">Link</a></li>-->
-        <!--<li class="dropdown">-->
-          <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>-->
-          <!--<ul class="dropdown-menu">-->
-            <!--<li><a href="#">Action</a></li>-->
-            <!--<li><a href="#">Another action</a></li>-->
-            <!--<li><a href="#">Something else here</a></li>-->
-            <!--<li role="separator" class="divider"></li>-->
-            <!--<li><a href="#">Separated link</a></li>-->
-          <!--</ul>-->
-        <!--</li>-->
-      </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
+
+            <ul class="nav navbar-nav navbar-right">
+                <a href="https://www.themoviedb.org" target="_blank" class="pull-right tmdb-image"><img
+                        style="opacity:.75;" src="/static/tmdb.png" alt="Powered by TMDB"></a>
+
+                <!--<li><a href="#">Link</a></li>-->
+                <!--<li class="dropdown">-->
+                <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>-->
+                <!--<ul class="dropdown-menu">-->
+                <!--<li><a href="#">Action</a></li>-->
+                <!--<li><a href="#">Another action</a></li>-->
+                <!--<li><a href="#">Something else here</a></li>-->
+                <!--<li role="separator" class="divider"></li>-->
+                <!--<li><a href="#">Separated link</a></li>-->
+                <!--</ul>-->
+                <!--</li>-->
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
 </nav>

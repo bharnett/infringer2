@@ -18,16 +18,13 @@ def search_sites(db=None):
     for source in db.query(ScanURL).order_by(ScanURL.priority).all():
         tv_is_completed = search.is_completed()
 
-        if (tv_is_completed and source.media_type == 'tv') or source.media_type == 'search':
-            # skip tv types list is completed
-            continue
         browser = WebInteraction.source_login(source)
         # get browser and login to the source
         if browser is None:
             ActionLog.log('%s could not logon' % source.login_page)
             continue
         else:
-            ActionLog.log('Scanning %s for %s' % (source.domain, source.media_type))
+            ActionLog.log('Scanning %s' % source.domain)
             # if you can login, start checking for content
             try:
                 soup = browser.get(source.url).soup
@@ -39,7 +36,6 @@ def search_sites(db=None):
             # let's try doing this with out the link selection, since we can parse them fast with
             # the regex, we don't necessarily need it.
 
-
             for link in soup:
                 check_result = search.check_link(link, source)
                 if check_result is False: # move onto new link if it doesn't match
@@ -48,8 +44,7 @@ def search_sites(db=None):
             # open links and get download links for TV
             search.open_links(browser, config, source)
 
-            if source.media_type in search.movie_types: #handles the movies pickd up to get their links
-                LinkInteraction.scan_movie_links(db, browser, source, config)
+            LinkInteraction.scan_movie_links(db, browser, source, config)
 
 if __name__ == "__main__":
     database = Models.connect()
