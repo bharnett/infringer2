@@ -56,6 +56,7 @@ def process_movie_link(db, link):
 
         if db.query(Movie).filter(Movie.name == edited_link_text).first() is None:
             m = Movie(name=edited_link_text, link_text=link.get('href'), status='Not Retrieved')
+            m.get_video_formats()
             db.add(m)
             db.commit()
         return True

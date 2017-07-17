@@ -68,6 +68,7 @@ class Episode(Base):
     download_time = Column(DateTime)
     episode_image = Column(String)
     last_updated = Column(DateTime)
+    is_download_validated = Column(Boolean, default=False)
 
     def __str__(self):
         return "%s s%se%s" % (self.show.show_name, str(self.season_number).zfill(2), str(self.episode_number).zfill(2))

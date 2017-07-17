@@ -74,7 +74,12 @@
                                     <a href="#" class="tv-episode" data-id="${s.show.show_id}" data-name="${s.episode_name}"
                                        data-poster="${s.episode_image}" data-overview="${s.episode_description}">
                                         ${str(s)}
+
+                                        % if s.is_downloaded:
+                                            <i class="fa fa-check-circle" style="color:#5cb85c" aria-hidden="true"></i>
+                                        % endif
                                     </a>
+
                                 </p>
                                 % endfor
                             </div>
@@ -194,7 +199,11 @@
                             rating_class = 'label label-' + rating_class
                         %>
 
-                        <p class="rating"><strong>Rating: </strong><span class="${rating_class}">${rating}</span></p>
+                        <p class="rating">
+                            <strong>Rating: </strong>
+                            <span class="${rating_class}">${rating}</span>
+                            <span class="label label-default">${m.video_format}</span></p>
+
                         <p><strong>Cast: </strong>${m.actors}</p>
                     </div>
                     </div>
