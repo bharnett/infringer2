@@ -5,24 +5,42 @@
     <title>Shows</title>
     <%include file="base.html"/>
     <script type="text/javascript" src="/static/js/shows.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <style type="text/css">
+
         html,
-body {
-    height: 100%;
-}
-
-        html {
-
-          background: url(https://image.tmdb.org/t/p/original/cCDuZqLv6jwnf3cZZq7g3uNLaIu.jpg) no-repeat center center fixed;
-          -webkit-background-size: cover;
-          -moz-background-size: cover;
-          -o-background-size: cover;
-          background-size: cover;
-        }
-
         body {
-            background-color: '';
+            height: 100%;
         }
+
+/*
+        body {
+            overflow-y: hidden ! important;
+            overflow-x: hidden ! important;
+            background-color: #f8f8f8;
+            background: url(https://image.tmdb.org/t/p/original/cCDuZqLv6jwnf3cZZq7g3uNLaIu.jpg);
+            /*background-size: cover;*/
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: right;
+        }
+
+*/
+
+        tr .btn {
+            opacity: 0.0;
+            transition: opacity .55s ease-in-out;
+            -moz-transition: opacity .55s ease-in-out;
+            -webkit-transition: opacity .55s ease-in-out;
+        }
+
+        tr:hover .btn {
+            opacity: 1.0;
+            transition: opacity .55s ease-in-out;
+            -moz-transition: opacity .55s ease-in-out;
+            -webkit-transition: opacity .55s ease-in-out;
+        }
+
 
 
     </style>
@@ -38,19 +56,16 @@ body {
                 <h4>Your Shows</h4>
             </div>
             <div>
-                <ul class="list-group">
+                <div class="list-group">
                     % for s in shows:
-                    <li class="list-group-item">
-                        <a href="#" class="show-link" data-id="${s.show_id}">${s.show_name}</a>
-                    </li>
+                    <a href="#" class="list-group-item show-link" data-id="${s.show_id}">${s.show_name}</a>
                     % endfor
-                </ul>
+                </div>
             </div>
 
         </div>
         <div class="col-md-9">
             <div>
-                <h3 class="show-name"></h3>
                 <div class="display:inline">
                     <button class="btn btn-primary btn-sm btn-circle" data-toggle="tooltip" data-title="">
                         <i class="fa fa-trash" aria-hidden="true"></i>
@@ -63,14 +78,16 @@ body {
                 </div>
             </div>
             <div>
-                <table class="table table-striped table-hover">
+                <table id="episode-table" class="table table-hover">
                     <thead>
                     <tr>
                         <th>
                             Episode Name
                         </th>
                         <th>Air Date</th>
+                        <th>Download Time</th>
                         <th>Status</th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>

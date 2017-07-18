@@ -68,7 +68,7 @@ class Infringer(object):
         all_shows = cherrypy.request.db.query(Show).order_by(Show.show_name.desc()).all()
         if show_id == 0:
             latest_episode = cherrypy.request.db.query(Episode).filter(Episode.air_date <= datetime.today())\
-                .order_by(Episode.air_date.desc()).first()
+                .order_by(Episode.air_date.asc()).first()
             current_show = latest_episode.show
         else:
             current_show = cherrypy.request.db.query(Show).filter(Show.show_id == show_id).first()
@@ -84,8 +84,6 @@ class Infringer(object):
             search_results = "{error: %s}" % Exception
 
         return jsonpickle.encode(show, max_depth=4, unpicklable=False)  # json.dumps(search_results)
-
-
 
     @cherrypy.expose
     @cherrypy.tools.json_in()
