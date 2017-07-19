@@ -35,21 +35,6 @@ class ShowReponse(object):
         self.episodes = None
 
 class Infringer(object):
-    # @cherrypy.expose
-    # def index(self):
-    #     config = cherrypy.request.db.query(Config).first()
-    #     if not config.is_populated():
-    #         raise cherrypy.HTTPRedirect("/config")
-    #     else:
-    #         index_template = my_lookup.get_template('index.html')
-    #         upcoming_episodes = cherrypy.request.db.query(Episode).filter(Episode.air_date != None).filter(
-    #             Episode.status == 'Pending').order_by(Episode.air_date)[:25]
-    #         index_shows = cherrypy.request.db.query(Show).order_by(Show.show_name)
-    #         index_movies = cherrypy.request.db.query(Movie).filter(Movie.status == 'Ready').all()
-    #         downloaded_shows = cherrypy.request.db.query(Episode).filter(Episode.retrieved_on is not None).order_by(
-    #             Episode.retrieved_on.desc())[:50]
-    #         return index_template.render(shows=index_shows, movies=index_movies, upcoming=upcoming_episodes,
-    #                                      downloaded=downloaded_shows, jd_link=config.jd_link)
 
     @cherrypy.expose
     def index(self):
@@ -58,13 +43,7 @@ class Infringer(object):
         vb.populate_addables()
         return index_template.render(vb=vb, jd_link=vb.jd_link)
 
-    # @cherrypy.expose
-    # def show(self, show_id):
-    #     show_template = my_lookup.get_template('show.html')
-    #     current_show = cherrypy.request.db.query(Show).filter(Show.show_id == show_id).first()
-    #     current_episodes = current_show.episodes.order_by(Episode.season_number.desc()).order_by(
-    #         Episode.episode_number.desc()).all()
-    #     return show_template.render(show=current_show, episodes=current_episodes)
+    # all for SHOW PAGES
 
     @cherrypy.expose
     def shows(self, show_id=0):

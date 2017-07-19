@@ -22,11 +22,21 @@ function UpdateShow(data) {
 
     var img = new Image();
     img.src = show.background;
+    var backgroundUrl = 'url("' + img.src + '")';
+
+    $('body').css('background-image', backgroundUrl);
+
+
     var tb = $('#episode-table tbody');
     $('#episode-table').css('opacity', 0.0)
+    $('#show-summary-section').css('opacity', 0.0)
 
     $('#episode-table').one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',
     function(e) {
+        var cache =$('#show-name-header').children();
+        $('#show-name-header').text(show.show_name).append(cache);
+        $('#show-overview-paragraph').text(show.overview)
+        $('#show-name-header').attr('data-id', show.show_id);
 
         $(tb).children().remove();
 
@@ -58,6 +68,7 @@ function UpdateShow(data) {
 
         })
         $('#episode-table').css('opacity', 1.0)
+        $('#show-summary-section').css('opacity', 1.0)
 
         $('.status-toggle').click(OnToggleClick);
    });

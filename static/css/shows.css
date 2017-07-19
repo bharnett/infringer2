@@ -1,7 +1,34 @@
+    /* structure */
+
     html,
     body {
         height: 100%;
     }
+
+    .container-fluid {
+        height: 93%
+    }
+
+    #show-and-episode-section {
+        height: 100%
+    }
+
+    body
+    {
+        background-position-x: center;
+        background-position-y: center;
+        background-size: cover;
+        background-repeat-x: no-repeat;
+        background-repeat-y: no-repeat;
+        background-attachment: fixed;
+        background-origin: initial;
+        background-clip: initial;
+        background-color: initial;
+        background-size: center;
+    }
+
+
+    /* transitions */
 
     tr td .btn {
         opacity: 0.0;
@@ -17,13 +44,38 @@
         -webkit-transition: opacity .55s ease-in-out;
     }
 
-    #episode-table {
+    #episode-table, #show-summary-section {
         opacity: 1.0;
         transition: opacity .3s ease-in-out;
         -moz-transition: opacity .3s ease-in-out;
         -webkit-transition: opacity .3s ease-in-out;
     }
 
-    no-opacity {
-        opacity: 0
+    table #all-pending-button {
+        opacity: 0.0;
+        transition: opacity .55s ease-in-out;
+        -moz-transition: opacity .55s ease-in-out;
+        -webkit-transition: opacity .55s ease-in-out;
+    }
+
+    table:hover #all-pending-button {
+        opacity: 1.0;
+        transition: opacity .55s ease-in-out;
+        -moz-transition: opacity .55s ease-in-out;
+        -webkit-transition: opacity .55s ease-in-out;
+    }
+
+
+   #show-summary-section .btn {
+        opacity: 0.0;
+        transition: opacity .55s ease-in-out;
+        -moz-transition: opacity .55s ease-in-out;
+        -webkit-transition: opacity .55s ease-in-out;
+    }
+
+    #show-summary-section:hover .btn  {
+        opacity: 1.0;
+        transition: opacity .55s ease-in-out;
+        -moz-transition: opacity .55s ease-in-out;
+        -webkit-transition: opacity .55s ease-in-out;
     }
