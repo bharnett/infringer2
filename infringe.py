@@ -91,8 +91,6 @@ class Infringer(object):
 
         return jsonpickle.encode(stuff, max_depth=4, unpicklable=False)
 
-        # return jsonpickle.encode(show, max_depth=4, unpicklable=False)  # json.dumps(search_results)
-
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
@@ -120,7 +118,7 @@ class Infringer(object):
         try:
 
             data = cherrypy.request.json
-            show_id = data['showid']
+            show_id = data['id']
             action = data['action']
 
             if action == 'refresh':

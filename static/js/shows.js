@@ -23,38 +23,44 @@ function UpdateShow(data) {
     var img = new Image();
     img.src = show.background;
     var tb = $('#episode-table tbody');
+    $('#episode-table').css('opacity', 0.0)
 
-    $(tb).children().remove();
+    $('#episode-table').one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',
+    function(e) {
 
-    episodes.forEach(function(episode) {
-        var dlDate = '';
-        var airDate =  '';
+        $(tb).children().remove();
 
-        if (episode.download_time != null) {
-            var date = moment(episode.download_time)
-            dlDate = date.format("ddd, MMM D, h:mm:ss a")
-        }
+        episodes.forEach(function(episode) {
+            var dlDate = '';
+            var airDate =  '';
 
-        if (episode.air_date != null)
-        {
-            var aDate = moment(episode.air_date);
-            air_date = aDate.format("ddd, MMM D");
-        }
+            if (episode.download_time != null) {
+                var date = moment(episode.download_time)
+                dlDate = date.format("ddd, MMM D, h:mm:ss a")
+            }
 
-        var statusIcon = episode.status == 'Pending' ? pendingIcon : retrievedIcon;
+            if (episode.air_date != null)
+            {
+                var aDate = moment(episode.air_date);
+                air_date = aDate.format("ddd, MMM D");
+            }
+
+            var statusIcon = episode.status == 'Pending' ? pendingIcon : retrievedIcon;
 
 
-        var nameCell = '<td class="col-md-4"><a href="#" class="episode-link">' + episode.episode_name + '</a></td>';
-        var dateCell = '<td class="col-md-2">' + air_date + '</td>';
-        var dlCell = '<td class="col-md-2">' + dlDate + '</td>';
-        var statusCell = '<td class="col-md-2">' + episode.status + ' ' + statusIcon + '</td>';
-        var btn = '<td class="col-md-2"><button class="btn btn-xs btn-primary status-toggle" data-id="' + episode.id + '">Toggle Status</button></td>'
+            var nameCell = '<td class="col-md-4"><a href="#" class="episode-link">' + episode.episode_name + '</a></td>';
+            var dateCell = '<td class="col-md-2">' + air_date + '</td>';
+            var dlCell = '<td class="col-md-2">' + dlDate + '</td>';
+            var statusCell = '<td class="col-md-2">' + episode.status + ' ' + statusIcon + '</td>';
+            var btn = '<td class="col-md-2"><button class="btn btn-xs btn-primary status-toggle" data-id="' + episode.id + '">Toggle Status</button></td>'
 
-        var newRow = $(tb).append('<tr>').find('tr').last().append(nameCell).append(dateCell).append(dlCell).append(statusCell).append(btn);
+            var newRow = $(tb).append('<tr>').find('tr').last().append(nameCell).append(dateCell).append(dlCell).append(statusCell).append(btn);
 
-    })
+        })
+        $('#episode-table').css('opacity', 1.0)
 
-    $('.status-toggle').click(OnToggleClick);
+        $('.status-toggle').click(OnToggleClick);
+   });
 
 }
 

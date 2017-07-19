@@ -1,0 +1,29 @@
+    html,
+    body {
+        height: 100%;
+    }
+
+    tr td .btn {
+        opacity: 0.0;
+        transition: opacity .55s ease-in-out;
+        -moz-transition: opacity .55s ease-in-out;
+        -webkit-transition: opacity .55s ease-in-out;
+    }
+
+    tr:hover td .btn {
+        opacity: 1.0;
+        transition: opacity .55s ease-in-out;
+        -moz-transition: opacity .55s ease-in-out;
+        -webkit-transition: opacity .55s ease-in-out;
+    }
+
+    #episode-table {
+        opacity: 1.0;
+        transition: opacity .3s ease-in-out;
+        -moz-transition: opacity .3s ease-in-out;
+        -webkit-transition: opacity .3s ease-in-out;
+    }
+
+    no-opacity {
+        opacity: 0
+    }
