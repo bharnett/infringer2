@@ -13,8 +13,15 @@
         height: 100%
     }
 
-    body
-    {
+
+
+    .page-bg {
+        opacity: 0;
+        position: fixed;
+        top: 40px;
+        left: 0;
+        height: 100%;
+        width: 100%;
         background-position-x: center;
         background-position-y: center;
         background-size: cover;
@@ -25,6 +32,15 @@
         background-clip: initial;
         background-color: initial;
         background-size: center;
+
+        transition: opacity .55s ease-in-out;
+        -moz-transition: opacity .55s ease-in-out;
+        -webkit-transition: opacity .55s ease-in-out;
+
+    }
+
+    #show-summary-section .btn-circle:focus {
+        outline: none;
     }
 
 

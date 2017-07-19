@@ -75,5 +75,6 @@ function OnIgnoreAllClick()
 
     $(this).hide();
     //show block quote
+    $('#movie-section blockquote').fadeIn();
 }
 

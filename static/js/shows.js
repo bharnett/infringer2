@@ -24,19 +24,20 @@ function UpdateShow(data) {
     img.src = show.background;
     var backgroundUrl = 'url("' + img.src + '")';
 
-    $('body').css('background-image', backgroundUrl);
+
 
 
     var tb = $('#episode-table tbody');
     $('#episode-table').css('opacity', 0.0)
     $('#show-summary-section').css('opacity', 0.0)
+    $('.page-bg').css('opacity', 0.0);
 
     $('#episode-table').one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',
     function(e) {
         var cache =$('#show-name-header').children();
         $('#show-name-header').text(show.show_name).append(cache);
         $('#show-overview-paragraph').text(show.overview)
-        $('#show-name-header').attr('data-id', show.show_id);
+        $('#selected-show-id').data('id', show.show_id);
 
         $(tb).children().remove();
 
@@ -69,6 +70,7 @@ function UpdateShow(data) {
         })
         $('#episode-table').css('opacity', 1.0)
         $('#show-summary-section').css('opacity', 1.0)
+        $('.page-bg').css('background-image', backgroundUrl).css('opacity', .35);
 
         $('.status-toggle').click(OnToggleClick);
    });
@@ -120,4 +122,58 @@ function OnAllPendingClick()
     })
 }
 
+function OnShowActionClick()
+{
+        var id = $('#selected-show-id').val();
+        var action = $(this).data('action');
+        var button = $(this);
+
+        $.ajax({
+            url: '/update_show',
+            dataType: 'text',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                'id': id,
+                'action': action
+            }),
+            type: 'POST',
+            beforeSend: OnActionClick(button),
+            error: function (req, errorString, ex) {
+                alert(errorString)
+            },
+            success: function (data) {
+                if (data == 'error') {
+                    alert("Error");
+                }
+                else {
+                    showStatus(false, action == 'refresh' ? "Refresh completed.  Reloading page." : "Show removed.  Back to Index.")
+                    window.setTimeout(function () {
+                        action == 'refresh' ? window.location.reload('/show/' + id) : window.location.href = "/index";
+                    }, 3000)
+                }
+
+            }
+        });
+}
+
+function OnActionClick(btn) {
+    var actionButton = btn;
+    var otherButton = $(btn).siblings('.btn').first();
+    var label = $(btn).closest('h3').find('.show-action-label');
+    var message = $(btn).data('action') == 'remove' ? 'Removing... ' : 'Refreshing... ';
+
+    $(actionButton).addClass('animated bounceOut').tooltip('destroy');
+    $(otherButton).addClass('animated flipOutX').tooltip('destroy');
+    $(otherButton).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend',
+        function () {
+            $(actionButton).parent().hide();
+            $(label).find('span').text(message);
+            $(label).css('display', 'inline').addClass('animated zoomIn');
+
+        }
+    )
+    setTimeout(function () {
+
+    }, 1000);
+}
 

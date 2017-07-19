@@ -16,6 +16,7 @@
 </head>
 <body>
 <%include file="nav.html"/>
+<div class="page-bg"></div>
 <input type="hidden" id="selected-show-id" value="${current.show_id}">
 <div class="container-fluid">
     <div class="row">
@@ -34,28 +35,19 @@
         </div>
         <div class="col-md-9">
             <div id="show-summary-section">
-                <!--<h3 id="show-name-header">-->
-                    <!--<div class="display:inline!important">-->
-                        <!--<button class="btn btn-primary btn-sm btn-circle" data-toggle="tooltip" data-title="">-->
-                            <!--<i class="fa fa-trash" aria-hidden="true"></i>-->
-                        <!--</button>-->
-                        <!--<button class="btn btn-primary btn-sm btn-circle" data-toggle="tooltip"-->
-                                <!--data-title="">-->
-                            <!--<i class="fa fa-refresh" aria-hidden="true"></i>-->
-                        <!--</button>-->
-                    <!--</div>-->
-                <!--</h3>-->
-
                         <h3 id="show-name-header">
 
                             <div style="display:inline!important">
 
-                                <button type="button" class="btn btn-sm btn-primary btn-circle" data-toggle="tooltip"
-                                        data-title="Remove show & episodes">
+                                <button type="button" id="remove-show-button" class="btn btn-sm btn-primary btn-circle"
+                                        data-toggle="tooltip"
+                                        data-title="Remove show & episodes" data-action="remove">
                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                 </button>
-                                <button type="button" class="btn btn-sm btn-primary btn-circle" data-toggle="tooltip"
-                                        data-title="Refresh episodes">
+                                <button type="button" id="refresh-show-button" class="btn btn-sm btn-primary btn-circle"
+                                        data-toggle="tooltip"
+                                        data-title="Refresh episodes"
+                                        data-action="refresh">
                                     <i class="fa fa-refresh" aria-hidden="true"></i>
                                 </button>
                             </div>
@@ -113,6 +105,8 @@
         $('#all-pending-button').click(OnAllPendingClick);
 
         $('#show-list').find('[data-id="' + $('#selected-show-id').val() + '"]').click();
+
+        $('#show-name-header .btn').click(OnShowActionClick);
 
     });
 
