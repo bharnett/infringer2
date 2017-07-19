@@ -13,28 +13,16 @@
             height: 100%;
         }
 
-/*
-        body {
-            overflow-y: hidden ! important;
-            overflow-x: hidden ! important;
-            background-color: #f8f8f8;
-            background: url(https://image.tmdb.org/t/p/original/cCDuZqLv6jwnf3cZZq7g3uNLaIu.jpg);
-            /*background-size: cover;*/
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: right;
-        }
 
-*/
 
-        tr .btn {
+        tr td .btn {
             opacity: 0.0;
             transition: opacity .55s ease-in-out;
             -moz-transition: opacity .55s ease-in-out;
             -webkit-transition: opacity .55s ease-in-out;
         }
 
-        tr:hover .btn {
+        tr:hover td .btn {
             opacity: 1.0;
             transition: opacity .55s ease-in-out;
             -moz-transition: opacity .55s ease-in-out;
@@ -48,7 +36,7 @@
 </head>
 <body>
 <%include file="nav.html"/>
-
+<input type="hidden" id="selected-show-id" value="${current.show_id}">
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-3">
@@ -56,7 +44,7 @@
                 <h4>Your Shows</h4>
             </div>
             <div>
-                <div class="list-group">
+                <div class="list-group" id="show-list">
                     % for s in shows:
                     <a href="#" class="list-group-item show-link" data-id="${s.show_id}">${s.show_name}</a>
                     % endfor
@@ -74,7 +62,7 @@
                             data-title="">
                         <i class="fa fa-refresh" aria-hidden="true"></i>
                     </button>
-                    <button class="btn btn-warning btn-sm float-right">Set all to 'pending'</button>
+                    <button class="btn btn-warning btn-sm float-right" id="all-pending-button">Set all to 'pending'</button>
                 </div>
             </div>
             <div>
@@ -113,6 +101,11 @@
         //$('#container-fluid').niceScroll();
 
         $('.show-link').click(OnShowClick);
+
+        $('#all-pending-button').click(OnAllPendingClick);
+
+        $('#show-list').find('[data-id="' + $('#selected-show-id').val() + '"]').click();
+
     });
 
 

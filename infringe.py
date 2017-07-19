@@ -29,6 +29,10 @@ my_lookup = TemplateLookup(directories=[template_dir])
 scan_refresh_scheduler = BackgroundScheduler()
 # cherrypy.request.db = models.connect()
 
+class ShowReponse(object):
+    def __init__(self):
+        self.show = None
+        self.episodes = None
 
 class Infringer(object):
     # @cherrypy.expose
@@ -79,11 +83,15 @@ class Infringer(object):
     @cherrypy.tools.json_out()
     def show(self, id):
         try:
-            show = cherrypy.request.db.query(Show).options(subqueryload(Show.episodes)).filter(Show.show_id == id).first()
+            show = cherrypy.request.db.query(Show).filter(Show.show_id == id).first()
+            episodes = cherrypy.request.db.query(Episode).filter(Episode.show_id == show.show_id).order_by(Episode.air_date.desc()).all()
+            stuff = (show, episodes)
         except Exception as ex:
-            search_results = "{error: %s}" % Exception
+            stuff = "{error: %s}" % Exception
 
-        return jsonpickle.encode(show, max_depth=4, unpicklable=False)  # json.dumps(search_results)
+        return jsonpickle.encode(stuff, max_depth=4, unpicklable=False)
+
+        # return jsonpickle.encode(show, max_depth=4, unpicklable=False)  # json.dumps(search_results)
 
     @cherrypy.expose
     @cherrypy.tools.json_in()
@@ -92,14 +100,13 @@ class Infringer(object):
         status = 'success'
         try:
             data = cherrypy.request.json
-            episode_id = data['episodeid']
-            change_to_value = data['changeto']
-            change_to_value = change_to_value.title()
+            episode_id = data['id']
             e = cherrypy.request.db.query(Episode).filter(Episode.id == episode_id).first()
-            e.status = change_to_value
+            e.status = 'Pending' if e.status == 'Retrieved' else 'Retrieved'
             if e.status == 'Pending':
                 e.reset()
             cherrypy.request.db.commit()
+            status = e.status
         except Exception as ex:
             ActionLog.log(ex)
             status = 'error'

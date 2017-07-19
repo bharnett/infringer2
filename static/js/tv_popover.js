@@ -22,7 +22,7 @@ function SetupTVPopover(e) {
         containerOption = 'body'
 
     } else {
-        titleText = '<a href="/show/' + id + '">' + name + '</a>';
+        titleText = '<a href="/shows/' + id + '">' + name + '</a>';
     }
 
     var img = new Image();
