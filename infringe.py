@@ -115,6 +115,14 @@ class Infringer(object):
 
         return json.dumps(status)
 
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def episode(self, id):
+        e = cherrypy.request.db.query(Episode).filter(Episode.id == id).first()
+        return jsonpickle.encode(e, unpicklable=False)
+
+
+
     @cherrypy.expose
     def log(self):
         log_template = my_lookup.get_template('log.html')

@@ -73,6 +73,10 @@ function UpdateShow(data) {
         $('.page-bg').css('background-image', backgroundUrl).css('opacity', .35);
 
         $('.status-toggle').click(OnToggleClick);
+        $('#show-name-header .btn').click(OnShowActionClick);
+        $('[data-toggle="tooltip"]').tooltip();
+
+
    });
 
 }
@@ -149,7 +153,7 @@ function OnShowActionClick()
                     showStatus(false, action == 'refresh' ? "Refresh completed.  Reloading page." : "Show removed.  Back to Index.")
                     window.setTimeout(function () {
                         action == 'refresh' ? window.location.reload('/show/' + id) : window.location.href = "/index";
-                    }, 3000)
+                    }, 2000)
                 }
 
             }
@@ -159,7 +163,7 @@ function OnShowActionClick()
 function OnActionClick(btn) {
     var actionButton = btn;
     var otherButton = $(btn).siblings('.btn').first();
-    var label = $(btn).closest('h3').find('.show-action-label');
+    var label = $('#show-action-label');
     var message = $(btn).data('action') == 'remove' ? 'Removing... ' : 'Refreshing... ';
 
     $(actionButton).addClass('animated bounceOut').tooltip('destroy');
