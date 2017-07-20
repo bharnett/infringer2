@@ -21,6 +21,7 @@ import LinkInteraction
 import IndexViewBag
 import jsonpickle
 import mechanicalsoup
+import re
 from sqlalchemy.orm import subqueryload
 
 
@@ -29,10 +30,6 @@ my_lookup = TemplateLookup(directories=[template_dir])
 scan_refresh_scheduler = BackgroundScheduler()
 # cherrypy.request.db = models.connect()
 
-class ShowReponse(object):
-    def __init__(self):
-        self.show = None
-        self.episodes = None
 
 class Infringer(object):
 
@@ -43,7 +40,7 @@ class Infringer(object):
         vb.populate_addables()
         return index_template.render(vb=vb, jd_link=vb.jd_link)
 
-    # all for SHOW PAGES
+    # all for SHOW PAGES#############################################
 
     @cherrypy.expose
     def shows(self, show_id=0):
@@ -115,12 +112,55 @@ class Infringer(object):
 
         return json.dumps(status)
 
+    @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
     def episode(self, id):
         e = cherrypy.request.db.query(Episode).filter(Episode.id == id).first()
-        return jsonpickle.encode(e, unpicklable=False)
+        return jsonpickle.encode(e, max_depth=3, unpicklable=False)
 
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def ajax_episode(self):
+        ar = AjaxResponse('Links updated.')
+        try:
+            # split by space and line return
+            data = cherrypy.request.json
+            links = data['episode-links-text']
+            all_links = re.split('[\n\r\s]+', links)
+
+        except Exception as ex:
+            ar.status = 'error'
+            ar.message = str(Exception)
+
+        return ar.to_JSON()
+
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def check_links(self,**kwargs):
+        try:
+            links = [elem for elem in kwargs.values()][2]
+            # split by space and line return
+            all_links = re.split('[\n\r\s]+', links)
+
+            b = mechanicalsoup.Browser()
+
+            is_valid_links = True
+            for l in all_links:
+                resp = b.get(l)
+                is_up = resp.status_code in [200]
+                if not is_up:
+                    is_valid_links = False
+                    break
+
+            return is_valid_links
+
+        except Exception as ex:
+            return False
+
+    # all for LOG PAGES#############################################
 
 
     @cherrypy.expose
@@ -129,6 +169,7 @@ class Infringer(object):
         logs = cherrypy.request.db.query(ActionLog).order_by(ActionLog.time_stamp.desc()).all()
         return log_template.render(log=logs)
 
+    # all for config PAGES#############################################
 
     @cherrypy.expose
     def config(self):
@@ -214,17 +255,13 @@ class Infringer(object):
 
         return validation_response
 
+    # all for Forum PAGES#############################################
+
     @cherrypy.expose
     def forums(self):
         forums_template = my_lookup.get_template('forums.html')
         data = cherrypy.request.db.query(ScanURL).all()
         config = cherrypy.request.db.query(Config).first()
-
-
-
-        # b = mechanicalsoup.Browser()
-        # page = b.get(data[0].domain)
-        # is_page_up = page.status_code in [200, 403]
 
 
         return forums_template.render(sources=data, jd_link=config.jd_link)
@@ -409,7 +446,7 @@ def startup():
 
     cherrypy.config.update({
         'server.socket_host': config.ip,
-        'server.socket_port': int(config.port),
+        'server.socket_port': 3000 #int(config.port),
     })
     # config_session.remove()
 

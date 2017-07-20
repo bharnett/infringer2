@@ -75,7 +75,7 @@
                                        data-poster="${s.episode_image}" data-overview="${s.episode_description}">
                                         ${str(s)}
 
-                                        % if s.is_downloaded:
+                                        % if s.status == 'Retrieved':
                                             <i class="fa fa-check-circle" style="color:#5cb85c" aria-hidden="true"></i>
                                         % endif
                                     </a>

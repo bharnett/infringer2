@@ -19,7 +19,7 @@ def add_show(show_id, db):
                     banner="",
                     poster='https://image.tmdb.org/t/p/w185' + series['poster_path'],
                     thumb="",
-                    background='https://image.tmdb.org/t/p/original' + series['poster_path'],
+                    background='https://image.tmdb.org/t/p/original' + series['backdrop_path'],
                     large_image='')
 
     new_show.make_regex()
