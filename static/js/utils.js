@@ -18,3 +18,14 @@ function getParameterByName(name, url) {
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
+
+function updateText(elem, text, isPrepend = false){
+    var cache = $(elem).children();
+    if (isPrepend)
+    {
+        $(elem).text(text).prepend(cache);
+    }
+    else {
+        $(elem).text(text).append(cache);
+    }
+}

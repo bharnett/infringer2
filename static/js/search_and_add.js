@@ -85,7 +85,7 @@ function OnShowAddClick() {
             if (data == 'duplicate') {
                 showStatus(true, 'Show already exists!')
             } else {
-                window.location.href = "/show/" + id
+                window.location.href = "/shows/" + id
             }
         },
         complete: function (data) {

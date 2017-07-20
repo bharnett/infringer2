@@ -57,9 +57,9 @@ function UpdateShow(data) {
             }
 
             var statusIcon = episode.status == 'Pending' ? pendingIcon : retrievedIcon;
+            var episodeCode = ' (S' + ('0'+episode.season_number) + 'E' + ('0'+episode.episode_number) + ')';
 
-
-            var nameCell = '<td class="col-md-4"><a href="#" class="episode-link">' + episode.episode_name + '</a></td>';
+            var nameCell = '<td class="col-md-4"><a href="#" data-id="' + episode.id + '" class="episode-link">' + episode.episode_name + episodeCode + '</a></td>';
             var dateCell = '<td class="col-md-2">' + air_date + '</td>';
             var dlCell = '<td class="col-md-2">' + dlDate + '</td>';
             var statusCell = '<td class="col-md-2">' + episode.status + ' ' + statusIcon + '</td>';
@@ -68,11 +68,23 @@ function UpdateShow(data) {
             var newRow = $(tb).append('<tr>').find('tr').last().append(nameCell).append(dateCell).append(dlCell).append(statusCell).append(btn);
 
         })
+
+        //updates the URL
+        //window.history.pushState(e.show_name, 'Title', '/shows/' + show.show_id);
+
         $('#episode-table').css('opacity', 1.0)
         $('#show-summary-section').css('opacity', 1.0)
         $('.page-bg').css('background-image', backgroundUrl).css('opacity', .35);
 
         $('.status-toggle').click(OnToggleClick);
+        $('#show-name-header .btn').click(OnShowActionClick);
+        $('[data-toggle="tooltip"]').tooltip();
+        $('.episode-link').click(OnShowEpisodeClick);
+
+//        $('#episode-table').parent().niceScroll({
+//            horizrailenabled: false
+//        });
+
    });
 
 }
@@ -149,7 +161,7 @@ function OnShowActionClick()
                     showStatus(false, action == 'refresh' ? "Refresh completed.  Reloading page." : "Show removed.  Back to Index.")
                     window.setTimeout(function () {
                         action == 'refresh' ? window.location.reload('/show/' + id) : window.location.href = "/index";
-                    }, 3000)
+                    }, 2000)
                 }
 
             }
@@ -159,7 +171,7 @@ function OnShowActionClick()
 function OnActionClick(btn) {
     var actionButton = btn;
     var otherButton = $(btn).siblings('.btn').first();
-    var label = $(btn).closest('h3').find('.show-action-label');
+    var label = $('#show-action-label');
     var message = $(btn).data('action') == 'remove' ? 'Removing... ' : 'Refreshing... ';
 
     $(actionButton).addClass('animated bounceOut').tooltip('destroy');
