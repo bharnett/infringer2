@@ -25,8 +25,8 @@ function OnShowEpisodeClick()
 
         if (episode.air_date != '')
         {
-            var date = moment(episode.download_time)
-            aDate = date.format("ddd, MMM D")
+            var date = moment(episode.air_date);
+            aDate = date.format("ddd, MMM D");
             $('#episode-detail-aired-date').text(aDate);
         }
 
@@ -34,6 +34,11 @@ function OnShowEpisodeClick()
             $('#episode-detail-source').val(episode.url_download_source);
 
             $('#episode-links-text').val(episode.download_links);
+
+            if (episode.url_download_source != null)
+            {
+                $("#episode-detail-source-link").attr('href', episode.url_download_source).show();
+            }
     });
 }
 
