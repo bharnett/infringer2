@@ -72,7 +72,8 @@
                                 % for s in [x for x in vb.this_week if x.air_date == d]:
                                 <p>
                                     <a href="#" class="tv-episode" data-id="${s.show.show_id}" data-name="${s.episode_name}"
-                                       data-poster="${s.episode_image}" data-overview="${s.episode_description}">
+                                       data-poster="${s.episode_image}" data-overview="${s.episode_description}"
+                                    data-episode-id="${s.id}" data-show-name="${s.show.show_name}">
                                         ${str(s)}
 
                                         % if s.status == 'Retrieved':
@@ -209,17 +210,7 @@
                             <span class="label label-default">${m.audio_format}</span>
                             <span class="label label-default">${m.source_format}</span>
                         </p>
-                        <!--<div class="rating clearfix">-->
-                            <!--<div class="pull-left">-->
-                                <!--<strong>Rating: </strong>-->
-                                <!--<span class="${rating_class}">${rating}</span>-->
-                            <!--</div>-->
-                            <!--<div class="pull-right">-->
-                                <!--<span class="label label-default">${m.video_format}</span>-->
-                                <!--<span class="label label-default">${m.audio_format}</span>-->
-                                <!--<span class="label label-default">${m.source_format}</span>-->
-                            <!--</div>-->
-                        <!--</div>-->
+
 
 
                         <p><strong>Cast: </strong>${m.actors}</p>

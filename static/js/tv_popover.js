@@ -6,6 +6,8 @@ function SetupTVPopover(e) {
     overview = $(element).data('overview');
     id = $(element).data('id');
     poster = $(element).data('poster');
+    showName = $(element).data('show-name');
+    episodeId = $(element).data('episode-id');
     actionRow = ''
     var titleText = ''
     var placementOption = 'right auto'
@@ -22,7 +24,7 @@ function SetupTVPopover(e) {
         containerOption = 'body'
 
     } else {
-        titleText = '<a href="/shows/' + id + '">' + name + '</a>';
+        titleText = '<a href="/shows/' + id + '">' + showName + '</a> - <a href="/shows/' + id + '?episode_id=' + episodeId + '">' + name + '</a>';
     }
 
     var img = new Image();

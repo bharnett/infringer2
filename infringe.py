@@ -43,7 +43,7 @@ class Infringer(object):
     # all for SHOW PAGES#############################################
 
     @cherrypy.expose
-    def shows(self, show_id=0):
+    def shows(self, show_id=0, episode_id=0):
         shows_template = my_lookup.get_template('shows.html')
         all_shows = cherrypy.request.db.query(Show).order_by(Show.show_name.desc()).all()
         if show_id == 0:

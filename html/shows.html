@@ -8,6 +8,8 @@
     <script type="text/javascript" src="/static/js/shows.js"></script>
     <script type="text/javascript" src="/static/js/episode_modal.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/2.1.0/jquery.scrollTo.min.js"></script>
+
     <link rel="stylesheet" href="/static/css/shows.css">
 
     <style type="text/css">
@@ -15,7 +17,16 @@
         #table-section {
             height:80%;
             overflow-y: scroll;
-        ]
+        }
+
+
+        .selected-row{
+            -webkit-transition: all 0.55s ease;
+             -moz-transition: all 0.55s ease;
+             -o-transition: all 0.55s ease;
+            transition: all 0.55s ease;
+        }
+
     </style>
 
 </head>

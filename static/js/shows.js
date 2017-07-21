@@ -4,6 +4,14 @@ var pendingIcon = '<i class="fa fa-ellipsis-h" style="color:#f0ad4e" aria-hidden
 
 
 function OnShowClick() {
+    $.each($("#episode-table").data("events"), function(i, event) {
+        alert(i);
+        $.each(event, function(j, h) {
+            alert(h.handler);
+        });
+    });
+
+
     $.get('/show', { id: $(this).data('id') },
         function(data) {
             UpdateShow(data);
@@ -11,6 +19,9 @@ function OnShowClick() {
 
     $('.show-link').removeClass('active');
     $(this).addClass('active');
+
+
+
 
 }
 
@@ -71,7 +82,7 @@ function UpdateShow(data) {
 
         //updates the URL
         //window.history.pushState(e.show_name, 'Title', '/shows/' + show.show_id);
-
+        $('#episode-table').off('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend');
         $('#episode-table').css('opacity', 1.0)
         $('#show-summary-section').css('opacity', 1.0)
         $('.page-bg').css('background-image', backgroundUrl).css('opacity', .35);
@@ -81,9 +92,18 @@ function UpdateShow(data) {
         $('[data-toggle="tooltip"]').tooltip();
         $('.episode-link').click(OnShowEpisodeClick);
 
-//        $('#episode-table').parent().niceScroll({
-//            horizrailenabled: false
-//        });
+        var targetEpisode = getParameterByName('episode_id')
+        if (targetEpisode != null && targetEpisode != '')
+        {
+            var episodeRow = $('[data-id="' + targetEpisode + '"]').first().closest('tr')
+            if (episodeRow.length > 0)
+            {
+                $('#table-section').scrollTo(episodeRow);
+                $(episodeRow).addClass("animated bounce");
+                $(episodeRow).find('a').click();
+            }
+
+        }
 
    });
 
