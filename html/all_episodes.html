@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shows</title>
+    <%include file="base.html"/>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
+
+    <style type="text/css">
+
+
+    </style>
+
+</head>
+<body>
+<%include file="nav.html"/>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <div>
+
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#pending" aria-controls="pending" role="tab"
+                                                              data-toggle="tab">Pending</a></li>
+                    <li role="presentation"><a href="#missed" aria-controls="missed" role="tab" data-toggle="tab">Missed</a>
+                    </li>
+                    <li role="presentation"><a href="#downloaded" aria-controls="downloaded" role="tab"
+                                               data-toggle="tab">Downloaded</a>
+                    </li>
+                    <li role="presentation"><a href="#all" aria-controls="all" role="tab" data-toggle="tab">All</a>
+                    </li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane fade active" id="pending">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Show</th>
+                                <th>Episode</th>
+                                <th>Air Date</th>
+                                <th>Download Attempts</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            % for e in pending:
+                            <tr>
+                                <td><a href="/shows/${e.show_id}">${e.show.show_name}</a></td>
+                                <td><a href="/shows/${e.show_id}?episode_id=${e.id}">${str(e)}</a></td>
+                                <td>${e.air_date}</td>
+                                <td>${e.attempts}</td>
+                            </tr>
+
+                            % endfor
+                            </tbody>
+                        </table>
+
+
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="missed">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Show</th>
+                                <th>Episode</th>
+                                <th>Air Date</th>
+                                <th>Download Attempts</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            % for e in missed:
+                            <tr>
+                                <td><a href="/shows/${e.show_id}">${e.show.show_name}</a></td>
+                                <td><a href="/shows/${e.show_id}?episode_id=${e.id}">${str(e)}</a></td>
+                                <td>${e.air_date}</td>
+                                <td>${e.attempts}</td>
+                            </tr>
+                            % endfor
+                            </tbody>
+                        </table>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="downloaded">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Show</th>
+                                <th>Episode</th>
+                                <th>Air Date</th>
+                                <th>Downloaded Date</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            % for e in downloaded:
+                            <tr>
+                                <td><a href="/shows/${e.show_id}">${e.show.show_name}</a></td>
+                                <td><a href="/shows/${e.show_id}?episode_id=${e.id}">${str(e)}</a></td>
+                                <td>${e.air_date}</td>
+                                % if e.download_time != None:
+                                    <td>${e.download_time.strftime('%a %b %d, %Y')}</td>
+                                % else:
+                                    <td></td>
+                                % endif
+                            </tr>
+                            </tbody>
+                            % endfor
+                        </table>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="all">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Show</th>
+                                <th>Episode</th>
+                                <th>Air Date</th>
+                                <th>Download Attempts</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            % for e in all:
+                            <tr>
+                                <td><a href="/shows/${e.show_id}">${e.show.show_name}</a></td>
+                                <td><a href="/shows/${e.show_id}?episode_id=${e.id}">${str(e)}</a></td>
+                                <td>${e.air_date}</td>
+                                <td>${e.attempts}</td>
+                            </tr>
+                            % endfor
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

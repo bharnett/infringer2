@@ -23,9 +23,11 @@
                         <hr>
                         <!--<span class="label label-info"></span>-->
                         <form class="form" id="episode-link-form" action="/ajax_episode" method="POST">
+                            <input type="hidden" id="episode-detail-id-hidden" name="episode-detail-id-hidden">
                             <div class="form-group">
                                 <label for="episode-detail-parent">Parent Page</label>
                                 <input type="text" id="episode-detail-parent" disabled class="input-sm form-control"
+                                       name="episode-detail-parent"
                                        placeholder="No parent page as this hasn't been found/downloaded.">
                             </div>
                             <div class="form-group">
@@ -33,13 +35,14 @@
                                 <a href="#" id="episode-detail-source-link" target="_blank" style="display:none;">
                                     <i class="fa fa-external-link" aria-hidden="true"></i></a>
                                 <input type="text" class="form-control input-sm" disabled id="episode-detail-source"
+                                       name="episode-detail-source"
                                        placeholder="No source page as this hasn't been found/downloaded.">
                             </div>
                             <div class="form-group">
                                 <label for="episode-links-text">Download Links</label>
-                                <i class="fa fa-spinner fa-spin" style="display:none;" aria-hidden="true"></i>
-                                <i class="fa fa-check-circle" style="color:#5cb85c; display:none;"
-                                   aria-hidden="true"></i>
+                                <!--<i class="fa fa-spinner fa-spin" style="display:none;" aria-hidden="true"></i>-->
+                                <!--<i class="fa fa-check-circle" style="color:#5cb85c; display:none;"-->
+                                   <!--aria-hidden="true"></i>-->
                                 <textarea class="form-control input-sm" rows="6" name="episode-links-text"
                                           id="episode-links-text"
                                           placeholder="Paste links to download this episode manually."></textarea>

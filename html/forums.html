@@ -87,12 +87,19 @@
                         </div>
                         <div class="form-group">
                             <label for="login_page">Login Page</label>
-                            <input type="text" class="form-control input-sm" id="login_page" name="login_page"
+                            <input type="text" class="form-control input-sm" id="login_page" name="login_page" data-toggle="tooltip" data-title="The full login page for the forum"
                                    value="${s.login_page}">
                         </div>
                         <div class="form-group">
-                            <label for="url">Scan URL</label>
-                            <input type="text" class="form-control input-sm" id="url" name="url" value="${s.url}">
+                            <label for="url">Scan/Search URL</label>
+                            <input type="text" class="form-control input-sm" id="url" name="url" value="${s.url}" data-toggle="tooltip" data-title="The static forum page you want to scan, or the search form">
+                        </div>
+                        <div class="form-group">
+                            <label for="scan_type">Scan Type</label>
+                            <select class="form-control input-sm" id="scan_type" name="scan_type" data-toggle="tooltip" data-title="'Statis' if it is an updated page, like Cardman pages.  'Search' if you provide the search page in the above. ">
+                                <option value="static" ${'selected="selected"' if s.scan_type=='static' else ''}>Static Page</option>
+                                <option value="search" ${'selected="selected"' if s.scan_type=='search' else ''}>Search Form</option>
+                            </select>
                         </div>
                     </div>
                 </div>

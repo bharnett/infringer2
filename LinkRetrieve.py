@@ -15,7 +15,7 @@ def search_sites(db=None):
     search = Search.Search(db)
     search.j_downloader_check(config)
 
-    for source in db.query(ScanURL).order_by(ScanURL.priority).all():
+    for source in db.query(ScanURL).filter(ScanURL.scan_type == 'static').order_by(ScanURL.priority).all():
         tv_is_completed = search.is_completed()
 
         browser = WebInteraction.source_login(source)
@@ -45,6 +45,27 @@ def search_sites(db=None):
             search.open_links(browser, config, source)
 
             LinkInteraction.scan_movie_links(db, browser, source, config)
+
+
+def search_forms(db = None):
+    if db is None:
+        db = Models.connect()
+        config = db.query(Config).first()
+        search = Search.Search(db)
+        # search.j_downloader_check(config)  prob dont' need this since it will be run after 'search_sites'
+
+        for source in db.query(ScanURL).filter(ScanURL.scan_type == 'static').order_by(ScanURL.priority).all():
+            tv_is_completed = search.is_completed()
+
+            browser = WebInteraction.source_login(source)
+            if browser is None:
+                ActionLog.log('%s could not logon' % source.login_page)
+                continue
+            else:
+                ActionLog.log('Searching %s' % source.domain)
+                #we invert the search format and check for each show, not each link in the page
+                
+
 
 if __name__ == "__main__":
     database = Models.connect()

@@ -123,6 +123,7 @@ class ScanURL(Base):
     priority = Column(Integer, nullable=True)
     domain = Column(String, default='http://www.domain.com/')
     logo_image = Column(String, default='/static/forum.png')
+    scan_type = Column(String, default='static') # can also be search
 
     def __str__(self):
         return self.domain

@@ -77,6 +77,7 @@ class Search(object):
                             episode.parent_download_page = source.url
                             episode.url_download_source = urljoin(source.domain, link.get('href'))
                             episode.is_found = True
+                            episode.attempts += 1
                             # ActionLog.log('"%s" found @ %s' % (episode, episode.url_download_source))
                             return episode.is_found
 

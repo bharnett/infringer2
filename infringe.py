@@ -123,12 +123,17 @@ class Infringer(object):
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
     def ajax_episode(self):
-        ar = AjaxResponse('Links updated.')
+        ar = AjaxResponse('Links updated & download started.')
         try:
             # split by space and line return
             data = cherrypy.request.json
             links = data['episode-links-text']
+            id = data['episode-detail-id-hidden']
             all_links = re.split('[\n\r\s]+', links)
+
+            episode = cherrypy.request.db.query(Episode).filter(Episode.id == id).first();
+            config = cherrypy.request.db.query(Config).first();
+            LinkInteraction.process_tv_link(cherrypy.request.db, config, episode, all_links)
 
         except Exception as ex:
             ar.status = 'error'
@@ -139,9 +144,9 @@ class Infringer(object):
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def check_links(self,**kwargs):
+    def check_links(self, **kwargs):
         try:
-            links = [elem for elem in kwargs.values()][2]
+            links = [elem for elem in kwargs.values()][0]
             # split by space and line return
             all_links = re.split('[\n\r\s]+', links)
 
@@ -149,11 +154,14 @@ class Infringer(object):
 
             is_valid_links = True
             for l in all_links:
-                resp = b.get(l)
-                is_up = resp.status_code in [200]
-                if not is_up:
-                    is_valid_links = False
-                    break
+                if l.strip() == '':
+                    continue
+                else:
+                    resp = b.get(l)
+                    is_up = resp.status_code in [200]
+                    if not is_up:
+                        is_valid_links = False
+                        break
 
             return is_valid_links
 
@@ -307,6 +315,8 @@ class Infringer(object):
 
         return ar.to_JSON()
 
+    # all for Index APIs #############################################
+
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
@@ -402,6 +412,16 @@ class Infringer(object):
 
         return ar.to_JSON()
 
+    @cherrypy.expose
+    def all_episodes(self):
+        all_template = my_lookup.get_template('all_episodes.html')
+
+        all_episodes = cherrypy.request.db.query(Episode).order_by(Episode.air_date.desc()).all()
+        pending_episodes = cherrypy.request.db.query(Episode).filter(Episode.status == 'Pending').order_by(Episode.air_date.desc()).all()
+        downloaded_episodes = cherrypy.request.db.query(Episode).filter(Episode.status == 'Retrieved').order_by(Episode.air_date.desc()).all()
+        missed_episodes = cherrypy.request.db.query(Episode).filter(Episode.status == 'Pending').filter(Episode.attempts > 0).order_by(Episode.air_date.desc()).all()
+
+        return all_template.render(all=all_episodes, pending=pending_episodes, downloaded=downloaded_episodes, missed=missed_episodes)
 
     @cherrypy.expose
     def restart(self):
@@ -446,7 +466,7 @@ def startup():
 
     cherrypy.config.update({
         'server.socket_host': config.ip,
-        'server.socket_port': 3000 #int(config.port),
+        'server.socket_port': int(config.port),
     })
     # config_session.remove()
 

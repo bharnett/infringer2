@@ -10,6 +10,7 @@ function OnShowEpisodeClick()
         $('#episode-detail-image').attr('src', episode.episode_image);
         $('#episode-detail-overview').text(episode.episode_description);
         $('#episode-detail-modal').modal('show');
+        $('#episode-detail-id-hidden').val(episode.id);
 
         if (episode.is_downloaded)
         {
@@ -45,7 +46,9 @@ function OnShowEpisodeClick()
 
 function Validation()
 {
- $('#episode-link-form').validate({
+
+
+ var dator = $('#episode-link-form').validate({
         highlight: function (element) {
             $(element).closest('.form-group').addClass("has-error");
         },
@@ -55,13 +58,14 @@ function Validation()
         errorClass: 'control-label has-error',
         rules: {
             'episode-links-text': {
-                required: true
-        //                    remote: '/check_links',
+                required: true,
+                remote: '/check_links',
             },
         },
         messages: {
             'episode-links-text': {
-                remote: 'Links are invalid.'
+                required: 'At least one link is required.',
+                remote: 'Links are invalid. \\:('
             },
 
         },
