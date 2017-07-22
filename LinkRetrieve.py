@@ -3,6 +3,7 @@ import Models
 import Search
 import WebInteraction
 import LinkInteraction
+import time
 
 
 def search_sites(db=None):
@@ -47,7 +48,7 @@ def search_sites(db=None):
             LinkInteraction.scan_movie_links(db, browser, source, config)
 
 
-def search_forms(db = None):
+def search_forms(db=None):
     if db is None:
         db = Models.connect()
         config = db.query(Config).first()
@@ -63,8 +64,12 @@ def search_forms(db = None):
                 continue
             else:
                 ActionLog.log('Searching %s' % source.domain)
-                #we invert the search format and check for each show, not each link in the page
-                
+                # we invert the search format and check for each show, not each link in the page
+
+            for s in search.shows_to_download:
+                response_links = WebInteraction.source_search(source, str(s), browser)
+                correct_links = [l for l in response_links if s.episode_in_link(l)]
+                time.sleep(15)  # wait five seconds between searches for warez-bb.org
 
 
 if __name__ == "__main__":

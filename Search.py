@@ -102,4 +102,9 @@ class Search(object):
 
 
 
+    def process_search_result(self, links, episode, browser):
+        for l in links:
+            individual_page = browser.get(l.get('href'))
+
+
 

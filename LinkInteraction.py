@@ -64,14 +64,6 @@ def process_movie_link(db, link):
         return False
 
 
-
-
-
-
-
-
-
-
 def get_download_links(soup, config, domain, hd_format='720p'):
 
     return_links = []

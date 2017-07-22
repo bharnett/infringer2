@@ -39,3 +39,17 @@ def source_login(source):
     else:
         return None
 
+
+def source_search(source, search_text, browser):
+    domain = source.domain.split('/')[2].replace('www.', '')
+
+    response_page_links = []
+
+    search_page = browser.get(source.url)
+    if domain in ['warez-bb.org', 'puzo.org']:
+        search_form = search_page.soup.select('form')[0]
+        search_form.findAll("input", {"type": "text"})[0]['value'] = search_text
+        response_page = browser.submit(search_form, search_page.url)
+        response_page_links = response_page.soup.select('a')
+
+    return response_page_links
