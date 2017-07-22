@@ -116,7 +116,7 @@
 
         $('#nav-forums-link').addClass('active');
 
-        $('#forum-form input').change(function(){
+        $('#forum-form input, select').change(function(){
             if ($(this).valid())
             {
                 updateDataSource(this)

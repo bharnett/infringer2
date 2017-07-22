@@ -100,11 +100,22 @@ class Search(object):
                         # TODO give a reason why the show isn't 'found' even though we did find it in the
                         # previous section
 
-
-
-    def process_search_result(self, links, episode, browser):
+    def process_search_result(self, links, episode, browser, source, config):
         for l in links:
-            individual_page = browser.get(l.get('href'))
+            individual_page = browser.get(urljoin(source.domain, l.get('href')))
+            if individual_page.status_code == 200:
+                episode_soup = individual_page.soup
+                episode_links = LinkInteraction.get_download_links(episode_soup, config, source.domain)
+                if LinkInteraction.is_valid_links(episode_links, browser, episode):
+                    episode.is_found = True
+                    episode.download_links = '\r'.join(episode_links)
+                    episode.parent_download_page = source.url
+                    LinkInteraction.process_tv_link(self.db, config, episode, episode_links)
+                    break
+                else:
+                    episode.is_found = False
+                    # TODO give a reason why the show isn't 'found' even though we did find it in the
+                    # previous section
 
 
 

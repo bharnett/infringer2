@@ -1,4 +1,5 @@
 import mechanicalsoup
+from urllib.parse import urlparse, urljoin
 
 
 def source_login(source):
@@ -44,12 +45,16 @@ def source_search(source, search_text, browser):
     domain = source.domain.split('/')[2].replace('www.', '')
 
     response_page_links = []
-
+    form_index = 0
     search_page = browser.get(source.url)
-    if domain in ['warez-bb.org', 'puzo.org']:
-        search_form = search_page.soup.select('form')[0]
+    if domain in ['warez-bb.org', 'puzo.org', 'adit-hd.com']: # all these have a search for as the first for on the page
+        search_form = search_page.soup.select('form')[form_index]
         search_form.findAll("input", {"type": "text"})[0]['value'] = search_text
         response_page = browser.submit(search_form, search_page.url)
+        if domain in ['adit-hd.com']: # these have a bounce page and we have to grab a link off the page and redirect
+            bounce_link = response_page.soup.select('a')[0]
+            bounce_link = urljoin(source.domain, bounce_link['href'])
+            response_page = browser.get(bounce_link)
         response_page_links = response_page.soup.select('a')
 
     return response_page_links

@@ -51,27 +51,35 @@ def search_sites(db=None):
 def search_forms(db=None):
     if db is None:
         db = Models.connect()
-        config = db.query(Config).first()
-        search = Search.Search(db)
-        # search.j_downloader_check(config)  prob dont' need this since it will be run after 'search_sites'
+    config = db.query(Config).first()
+    search = Search.Search(db)
+    # search.j_downloader_check(config)  prob dont' need this since it will be run after 'search_sites'
 
-        for source in db.query(ScanURL).filter(ScanURL.scan_type == 'static').order_by(ScanURL.priority).all():
-            tv_is_completed = search.is_completed()
+    for source in db.query(ScanURL).filter(ScanURL.scan_type == 'search').order_by(ScanURL.priority).all():
+        tv_is_completed = search.is_completed()
 
-            browser = WebInteraction.source_login(source)
-            if browser is None:
-                ActionLog.log('%s could not logon' % source.login_page)
-                continue
-            else:
-                ActionLog.log('Searching %s' % source.domain)
-                # we invert the search format and check for each show, not each link in the page
+        if tv_is_completed:
+            break
 
-            for s in search.shows_to_download:
-                response_links = WebInteraction.source_search(source, str(s), browser)
-                correct_links = [l for l in response_links if s.episode_in_link(l)]
-                time.sleep(15)  # wait five seconds between searches for warez-bb.org
+        if 'puzo' in source.domain or 'warez' in source.domain:
+            continue
+
+        browser = WebInteraction.source_login(source)
+        if browser is None:
+            ActionLog.log('%s could not logon' % source.login_page)
+            continue
+        else:
+            ActionLog.log('Searching %s' % source.domain)
+            # we invert the search format and check for each show, not each link in the page
+
+        for s in search.shows_to_download:
+            response_links = WebInteraction.source_search(source, str(s), browser)
+            correct_links = [l for l in response_links if s.episode_in_link(l.text.lower())]
+            search.process_search_result(correct_links, s, browser, source, config)
+            time.sleep(15)  # wait five seconds between searches for warez-bb.org
 
 
 if __name__ == "__main__":
     database = Models.connect()
-    search_sites(database)
+    # search_sites(database)
+    search_forms(database)

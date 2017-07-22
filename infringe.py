@@ -45,7 +45,7 @@ class Infringer(object):
     @cherrypy.expose
     def shows(self, show_id=0, episode_id=0):
         shows_template = my_lookup.get_template('shows.html')
-        all_shows = cherrypy.request.db.query(Show).order_by(Show.show_name.desc()).all()
+        all_shows = cherrypy.request.db.query(Show).order_by(Show.show_name.asc()).all()
         if show_id == 0:
             latest_episode = cherrypy.request.db.query(Episode).filter(Episode.air_date <= datetime.today())\
                 .order_by(Episode.air_date.asc()).first()
@@ -268,7 +268,7 @@ class Infringer(object):
     @cherrypy.expose
     def forums(self):
         forums_template = my_lookup.get_template('forums.html')
-        data = cherrypy.request.db.query(ScanURL).all()
+        data = cherrypy.request.db.query(ScanURL).order_by(ScanURL.priority.asc()).all()
         config = cherrypy.request.db.query(Config).first()
 
 
