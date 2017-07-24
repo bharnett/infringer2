@@ -12,18 +12,10 @@
     </style>
 </head>
 <body>
+<%include file="nav.html"/>
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
-            <div class="form-inline" style="padding: 10px">
-                <div class="form-group">
-                    <a class="btn btn-default" role="button" href="/index/">
-                        <i class="fa fa-home"></i> home</a>
-
-                    <h3>Logging!</h3>
-                </div>
-            </div>
-
 
             <div id="table_wrapper" class="well">
                 % if log:
@@ -40,7 +32,8 @@
 </body>
 <script type="javascript">
     $(document).ready(function () {
-        $('#container-fluid').niceScroll();
+        Globals();
+        $('#table-wrapper').niceScroll();
     })
 
 </script>

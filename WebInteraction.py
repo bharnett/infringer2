@@ -1,5 +1,6 @@
 import mechanicalsoup
 from urllib.parse import urlparse, urljoin
+from Models import ActionLog
 
 
 def source_login(source):
@@ -32,7 +33,7 @@ def source_login(source):
         login_form.findAll("input", {"type": "text"})[username_index]['value'] = source.username
         login_form.findAll("input", {"type": "password"})[password_index]['value'] = source.password
 
-        response_page = browser.submit(login_form,login_page.url)
+        response_page = browser.submit(login_form, login_page.url)
         print(response_page.status_code)
 
         return browser
@@ -43,7 +44,6 @@ def source_login(source):
 
 def source_search(source, search_text, browser):
     domain = source.domain.split('/')[2].replace('www.', '')
-
     response_page_links = []
     form_index = 0
     search_page = browser.get(source.url)
@@ -51,10 +51,15 @@ def source_search(source, search_text, browser):
         search_form = search_page.soup.select('form')[form_index]
         search_form.findAll("input", {"type": "text"})[0]['value'] = search_text
         response_page = browser.submit(search_form, search_page.url)
-        if domain in ['adit-hd.com']: # these have a bounce page and we have to grab a link off the page and redirect
-            bounce_link = response_page.soup.select('a')[0]
-            bounce_link = urljoin(source.domain, bounce_link['href'])
-            response_page = browser.get(bounce_link)
-        response_page_links = response_page.soup.select('a')
+        if response_page.status_code != '404':
+            if domain in ['adit-hd.com']: # these have a bounce page and we have to grab a link off the page and redirect
+                bounce_link = response_page.soup.select('a')[0]
+                if 'href' in bounce_link:
+                    bounce_link = urljoin(source.domain, bounce_link['href'])
+                    response_page = browser.get(bounce_link)
+                else:
+                    ActionLog.log('There was an issue with the bounce link when searching %s.  Check you password and/or login on a browser to pass a captcha test.' % source.url)
+                    return response_page_links
+            response_page_links = response_page.soup.select('a')
 
     return response_page_links

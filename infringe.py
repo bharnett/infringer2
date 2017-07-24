@@ -367,12 +367,12 @@ class Infringer(object):
             action = data['action']
 
             if action == 'scan':
-                LinkRetrieve.search_sites(cherrypy.request.db)
+                LinkRetrieve.search_all(cherrypy.request.db)
 
             if action == 'refresh':
                 MediaInteraction.update_all(cherrypy.request.db)
         except Exception as ex:
-            ActionLog.log(ex)
+            ActionLog.log(str(ex))
             status = 'error'
 
         return json.dumps(status)
@@ -470,7 +470,7 @@ def startup():
     })
     # config_session.remove()
 
-    scan_refresh_scheduler.add_job(LinkRetrieve.search_sites, 'cron', hour='*/' + str(config.scan_interval),
+    scan_refresh_scheduler.add_job(LinkRetrieve.search_all, 'cron', hour='*/' + str(config.scan_interval),
                                    id='scan_job', misfire_grace_time=60)
     scan_refresh_scheduler.add_job(Utils.update_all, 'cron', day_of_week=config.refresh_day,
                                    hour=str(config.refresh_hour), id='refresh_job', misfire_grace_time=60)

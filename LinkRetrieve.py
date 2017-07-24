@@ -6,6 +6,13 @@ import LinkInteraction
 import time
 
 
+def search_all(db=None):
+    if db is None:
+        db = Models.connect()
+    search_sites(db)
+    search_forums(db)
+
+
 def search_sites(db=None):
     # This is to search pages.  They can either be long pages like cardman's or search results
     # also this can be used to search a dynamic results page or
@@ -25,7 +32,7 @@ def search_sites(db=None):
             ActionLog.log('%s could not logon' % source.login_page)
             continue
         else:
-            ActionLog.log('Scanning %s' % source.domain)
+            ActionLog.log('Scanning %s for the STATIC page %s.' % (source.domain, source.url))
             # if you can login, start checking for content
             try:
                 soup = browser.get(source.url).soup
@@ -48,7 +55,7 @@ def search_sites(db=None):
             LinkInteraction.scan_movie_links(db, browser, source, config)
 
 
-def search_forms(db=None):
+def search_forums(db=None):
     if db is None:
         db = Models.connect()
     config = db.query(Config).first()
@@ -61,18 +68,16 @@ def search_forms(db=None):
         if tv_is_completed:
             break
 
-        if 'puzo' in source.domain or 'warez' in source.domain:
-            continue
-
         browser = WebInteraction.source_login(source)
         if browser is None:
             ActionLog.log('%s could not logon' % source.login_page)
             continue
         else:
-            ActionLog.log('Searching %s' % source.domain)
+            ActionLog.log('Searching via the search form on %s.' % source.domain)
             # we invert the search format and check for each show, not each link in the page
 
         for s in search.shows_to_download:
+            ActionLog.log('Searching for %s.' % str(s))
             response_links = WebInteraction.source_search(source, str(s), browser)
             correct_links = [l for l in response_links if s.episode_in_link(l.text.lower())]
             search.process_search_result(correct_links, s, browser, source, config)
@@ -81,5 +86,4 @@ def search_forms(db=None):
 
 if __name__ == "__main__":
     database = Models.connect()
-    # search_sites(database)
-    search_forms(database)
+    search_all(database)
