@@ -37,16 +37,18 @@ class Show(Base):
 
     def make_regex(self):
         regex_name = self.show_name.lower()
+        temp_name = ''
+        for c in regex_name:
+            if c in hide_chars:
+                temp_name = temp_name + '[a-zA-Z0-9]'
+            elif c in space_chars:
+                temp_name = temp_name + '[\s\.\\_,\s]'
+            else:
+                temp_name = temp_name + c
 
-        for char in hide_chars:
-            regex_name = regex_name.replace(char, '[a-zA-Z0-9]')
-
-        for char in space_chars:
-            regex_name = regex_name.replace(char, '[\s\.\\_]')
-        #
-        # for a in ['&', 'and']:
-        #     regex_name = regex_name.replace(a, '(and)&')
-        self.regex = regex_name
+        # TODO handle 'and' and '&' to be the same in the regex search, but only for the whole word 'and'
+        self.regex = temp_name
+        return self.regex
 
 
 class Episode(Base):
@@ -83,7 +85,7 @@ class Episode(Base):
                                         str(self.episode_number).zfill(2))
         episode_id_string = episode_id_string.lower()
 
-        if (episode_id_string in link_text) and len(re.findall(self.show.regex, link_text)) > 0:
+        if (episode_id_string in link_text) and len(re.findall(self.show.make_regex(), link_text)) > 0:
             return True
         else:
             return False
