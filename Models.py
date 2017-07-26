@@ -9,7 +9,8 @@ import re
 import datetime
 
 hide_chars = ['e', 'l', 'o']
-space_chars = ['.',' ','_', ',']
+space_chars = ['.','_',' ', ',']
+punc_chars = [',', '?', '!']
 
 Base = declarative_base()
 
@@ -36,11 +37,12 @@ class Show(Base):
 
     def make_regex(self):
         regex_name = self.show_name.lower()
+
         for char in hide_chars:
             regex_name = regex_name.replace(char, '[a-zA-Z0-9]')
 
-        # for char in space_chars:
-        #     regex_name = regex_name.replace(char, '[\s\.\\_]')
+        for char in space_chars:
+            regex_name = regex_name.replace(char, '[\s\.\\_]')
         #
         # for a in ['&', 'and']:
         #     regex_name = regex_name.replace(a, '(and)&')
