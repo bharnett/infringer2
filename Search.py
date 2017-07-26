@@ -22,7 +22,7 @@ class Search(object):
     def get_episode_list(self):
         list_of_shows = []
 
-        for s in self.db.query(Show).filter(Show.is_active).all():
+        for s in self.db.query(Show).all():
             episodes = s.episodes.filter(Episode.air_date <= datetime.date.today() - datetime.timedelta(days=1)).filter(
                 Episode.status == 'Pending').all()
 

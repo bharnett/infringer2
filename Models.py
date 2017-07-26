@@ -9,7 +9,7 @@ import re
 import datetime
 
 hide_chars = ['e', 'l', 'o']
-space_chars = ['.',' ','_']
+space_chars = ['.',' ','_', ',']
 
 Base = declarative_base()
 

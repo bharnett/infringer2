@@ -14,7 +14,7 @@ def add_show(show_id, db):
     new_show = Show(show_id=series['id'],
                     show_name=series['name'],
                     first_aired=datetime.datetime.strptime(series['first_air_date'], '%Y-%m-%d'),
-                    is_active=series['status'] == 'Returning Series',
+                    is_active=series['status'] != 'Ended',
                     overview=series['overview'],
                     banner="",
                     poster='https://image.tmdb.org/t/p/w185' + series['poster_path'],

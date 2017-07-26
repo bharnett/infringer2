@@ -20,7 +20,7 @@ function OnShowClick() {
     $('.show-link').removeClass('active');
     $(this).addClass('active');
 
-
+    $('#selected-show-id').val($(this).data('id'));
 
 
 }
@@ -180,7 +180,7 @@ function OnShowActionClick()
                 else {
                     showStatus(false, action == 'refresh' ? "Refresh completed.  Reloading page." : "Show removed.  Back to Index.")
                     window.setTimeout(function () {
-                        action == 'refresh' ? window.location.reload('/show/' + id) : window.location.href = "/index";
+                        action == 'refresh' ? window.location.href = '/shows/' + id : window.location.href = "/index";
                     }, 2000)
                 }
 
