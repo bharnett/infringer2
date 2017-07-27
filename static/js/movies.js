@@ -64,6 +64,11 @@ function OnActionClick(btn) {
     setTimeout(function () {
 
     }, 1000);
+    if ($('.movie-row').length == 0)
+    {
+        $('#movie-section blockquote').show();
+    }
+
 }
 
 function OnIgnoreAllClick()
