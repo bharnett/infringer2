@@ -418,7 +418,7 @@ class Infringer(object):
         all_template = my_lookup.get_template('all_episodes.html')
 
         all_episodes = cherrypy.request.db.query(Episode).order_by(Episode.air_date.desc()).all()
-        pending_episodes = cherrypy.request.db.query(Episode).filter(Episode.status == 'Pending').order_by(Episode.air_date.desc()).all()
+        pending_episodes = cherrypy.request.db.query(Episode).filter(Episode.status == 'Pending').order_by(Episode.air_date.asc()).all()
         downloaded_episodes = cherrypy.request.db.query(Episode).filter(Episode.status == 'Retrieved').order_by(Episode.air_date.desc()).all()
         missed_episodes = cherrypy.request.db.query(Episode).filter(Episode.status == 'Pending').filter(Episode.attempts > 0).order_by(Episode.air_date.desc()).all()
 

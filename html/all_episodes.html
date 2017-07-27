@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Shows</title>
+    <title>Episodes</title>
     <%include file="base.html"/>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 
@@ -18,24 +18,28 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
+
             <div>
 
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active"><a href="#pending" aria-controls="pending" role="tab"
-                                                              data-toggle="tab">Pending</a></li>
-                    <li role="presentation"><a href="#missed" aria-controls="missed" role="tab" data-toggle="tab">Missed</a>
+                    <li role="presentation" class="active">
+                        <a href="#pending" aria-controls="pending" role="tab" data-toggle="tab">Pending</a>
                     </li>
-                    <li role="presentation"><a href="#downloaded" aria-controls="downloaded" role="tab"
-                                               data-toggle="tab">Downloaded</a>
+                    <li role="presentation">
+                        <a href="#missed" aria-controls="missed" role="tab" data-toggle="tab">Missed</a>
                     </li>
-                    <li role="presentation"><a href="#all" aria-controls="all" role="tab" data-toggle="tab">All</a>
+                    <li role="downloaded">
+                        <a href="#downloaded" aria-controls="downloaded" role="tab" data-toggle="tab">Downloaded</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#all" aria-controls="all" role="tab" data-toggle="tab">All</a>
                     </li>
                 </ul>
 
                 <!-- Tab panes -->
                 <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane fade active" id="pending">
+                    <div role="tabpanel" class="tab-pane fade in active" id="pending">
                         <table class="table table-hover">
                             <thead>
                             <tr>
@@ -57,8 +61,6 @@
                             % endfor
                             </tbody>
                         </table>
-
-
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="missed">
                         <table class="table table-hover">
@@ -89,7 +91,7 @@
                                 <th>Show</th>
                                 <th>Episode</th>
                                 <th>Air Date</th>
-                                <th>Downloaded Date</th>
+                                <th>Download Date</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -104,8 +106,9 @@
                                     <td></td>
                                 % endif
                             </tr>
-                            </tbody>
+
                             % endfor
+                            </tbody>
                         </table>
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="all">
@@ -133,6 +136,7 @@
                 </div>
 
             </div>
+
         </div>
     </div>
 </div>
