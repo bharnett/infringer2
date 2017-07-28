@@ -140,7 +140,7 @@
                 % if len(vb.movies) == 0:
                 <blockquote>
                     <p>No movies yet.  Either you've cleared your list, or no new titles have been found recently.</p>
-                    <small>To cleanup your movie data, click <a class="movie-cleanup" href="#">here</a>.  If you want to start a new scan
+                    <small>To cleanup your movie data, click <a id="movie-cleanup" data-movie-action="cleanup" data-movie-id="0" href="#">here</a>.  If you want to start a new scan
                     <a data-admin="scan" class="admin" href="#">click here.</a></small>
                 </blockquote>
 
@@ -266,6 +266,7 @@
         HandleSearchAndAdd();
 
         $('.movie-action .btn').click(HandleMovieAction);
+        $('#movie-cleanup').click(HandleMovieAction);
         $('#ignore-all-button').click(OnIgnoreAllClick);
     });
 

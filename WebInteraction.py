@@ -3,6 +3,7 @@ from urllib.parse import urlparse, urljoin
 from Models import ActionLog
 from requests.exceptions import SSLError
 
+
 def source_login(source, browser):
     # source_domain = urlparse(source.login_page).netloc
     # browser = mechanicalsoup.Browser()

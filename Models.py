@@ -109,6 +109,7 @@ class PremierShow(Base):
     overview = Column(String)
     first_aired = Column(Date)
 
+
 class PopularShow(Base):
     __tablename__ = 'popularshow'
     id = Column(Integer, primary_key=True)
@@ -116,6 +117,7 @@ class PopularShow(Base):
     poster = Column(String)
     overview = Column(String)
     first_aired = Column(Date)
+
 
 class ScanURL(Base):
     __tablename__ = 'scanurl'
