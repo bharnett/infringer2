@@ -467,7 +467,7 @@ def startup():
 
     cherrypy.config.update({
         'server.socket_host': config.ip,
-        'server.socket_port': 3000 #int(config.port),
+        'server.socket_port': int(config.port),
     })
     # config_session.remove()
 
