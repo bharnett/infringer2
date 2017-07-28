@@ -106,7 +106,10 @@ class Search(object):
             if individual_page.status_code == 200:
                 episode_soup = individual_page.soup
                 episode_links = LinkInteraction.get_download_links(episode_soup, config, source.domain)
+                ActionLog.log('%s found at %s.  Processing links...' % ((episode), l.get('href')))
+
                 if LinkInteraction.is_valid_links(episode_links, browser, episode):
+
                     episode.is_found = True
                     episode.download_links = '\r'.join(episode_links)
                     episode.parent_download_page = source.url
@@ -114,7 +117,7 @@ class Search(object):
                     break
                 else:
                     episode.is_found = False
-                    # TODO give a reason why the show isn't 'found' even though we did find it in the
+                    ActionLog.log('%s had invalid or unavailable links at %s.' % ((episode), l.get('href')))
                     # previous section
 
 

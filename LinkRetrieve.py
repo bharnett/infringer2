@@ -4,16 +4,19 @@ import Search
 import WebInteraction
 import LinkInteraction
 import time
+import mechanicalsoup
 
 
 def search_all(db=None):
+    browser = mechanicalsoup.Browser()
+
     if db is None:
         db = Models.connect()
-    search_sites(db)
-    search_forums(db)
+    search_sites(browser, db)
+    search_forums(browser, db)
 
 
-def search_sites(db=None):
+def search_sites(browser, db=None):
     # This is to search pages.  They can either be long pages like cardman's or search results
     # also this can be used to search a dynamic results page or
     if db is None:
@@ -26,9 +29,9 @@ def search_sites(db=None):
     for source in db.query(ScanURL).filter(ScanURL.scan_type == 'static').order_by(ScanURL.priority).all():
         tv_is_completed = search.is_completed()
 
-        browser = WebInteraction.source_login(source)
+        browser_status = WebInteraction.source_login(source, browser)
         # get browser and login to the source
-        if browser is None:
+        if browser_status is False:
             ActionLog.log('%s could not logon' % source.login_page)
             continue
         else:
@@ -55,7 +58,7 @@ def search_sites(db=None):
             LinkInteraction.scan_movie_links(db, browser, source, config)
 
 
-def search_forums(db=None):
+def search_forums(browser, db=None):
     if db is None:
         db = Models.connect()
     config = db.query(Config).first()
@@ -68,8 +71,8 @@ def search_forums(db=None):
         if tv_is_completed:
             break
 
-        browser = WebInteraction.source_login(source)
-        if browser is None:
+        browser_status = WebInteraction.source_login(source, browser)
+        if browser_status is False:
             ActionLog.log('%s could not logon' % source.login_page)
             continue
         else:
@@ -80,6 +83,7 @@ def search_forums(db=None):
             ActionLog.log('Searching for %s.' % str(s))
             response_links = WebInteraction.source_search(source, str(s), browser)
             correct_links = [l for l in response_links if s.episode_in_link(l.text.lower())]
+            ActionLog.log('Found %s links for %s on %s' % (str(len(correct_links)), str(s), source.domain))
             search.process_search_result(correct_links, s, browser, source, config)
             time.sleep(15)  # wait five seconds between searches for warez-bb.org
 

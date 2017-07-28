@@ -1,11 +1,11 @@
 import mechanicalsoup
 from urllib.parse import urlparse, urljoin
 from Models import ActionLog
+from requests.exceptions import SSLError
 
-
-def source_login(source):
+def source_login(source, browser):
     # source_domain = urlparse(source.login_page).netloc
-    browser = mechanicalsoup.Browser()
+    # browser = mechanicalsoup.Browser()
     try:
         login_page = browser.get(source.login_page)
     except Exception as ex:
@@ -29,24 +29,35 @@ def source_login(source):
         else:
             return None
 
+
         login_form = login_page.soup.select('form')[form_index]
-        login_form.findAll("input", {"type": "text"})[username_index]['value'] = source.username
-        login_form.findAll("input", {"type": "password"})[password_index]['value'] = source.password
 
-        response_page = browser.submit(login_form, login_page.url)
-        print(response_page.status_code)
+        # check if already logged in
+        if 'search' in login_form.get('action'):
+            return True
+        else:
+            login_form.findAll("input", {"type": "text"})[username_index]['value'] = source.username
+            login_form.findAll("input", {"type": "password"})[password_index]['value'] = source.password
 
-        return browser
+            response_page = browser.submit(login_form, login_page.url)
+            print(response_page.status_code)
+
+            return True
 
     else:
-        return None
+        return False
 
 
 def source_search(source, search_text, browser):
     domain = source.domain.split('/')[2].replace('www.', '')
     response_page_links = []
     form_index = 0
-    search_page = browser.get(source.url)
+    try:
+        search_page = browser.get(source.url)
+    except SSLError:
+        ActionLog.log('Bad or no SSL cert on %s.  Check website for details.' % source.url)
+        return response_page_links
+
     if domain in ['warez-bb.org', 'puzo.org', 'adit-hd.com']: # all these have a search for as the first for on the page
         search_form = search_page.soup.select('form')[form_index]
         search_form.findAll("input", {"type": "text"})[0]['value'] = search_text
