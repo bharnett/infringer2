@@ -22,6 +22,8 @@ function HandleMovieAction() {
                 if (ar.status == 'success') {
                     if (action == 'ignore') {
                         $(button).closest('.movie-row').slideUp().remove();
+                        if ($('.movie-row').length == 0)
+                            $('#movie-blockquote').fadeIn();
                     } else if (action == 'cleanup') {
                         location.reload(true);
                     } else {
@@ -31,6 +33,8 @@ function HandleMovieAction() {
                         setTimeout(function () {
                             $(currentRow).slideUp(300, function(){
                                 $(this).remove()
+                                if ($('.movie-row').length == 0)
+                                    $('#movie-blockquote').fadeIn();
                             })
                         }, 1000)
                     }
@@ -64,10 +68,9 @@ function OnActionClick(btn) {
     setTimeout(function () {
 
     }, 1000);
-    if ($('.movie-row').length == 0)
-    {
-        $('#movie-section blockquote').show();
-    }
+
+
+
 
 }
 
@@ -79,7 +82,7 @@ function OnIgnoreAllClick()
     })
 
     $(this).hide();
-    //show block quote
-    $('#movie-section blockquote').fadeIn();
+    //$('#movie-blockquote').fadeIn();
+
 }
 

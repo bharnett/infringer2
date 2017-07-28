@@ -137,15 +137,12 @@
                 <hr>
             </div>
             <div class="row-scroll-section">
-                % if len(vb.movies) == 0:
-                <blockquote>
+
+                <blockquote id="movie-blockquote" style="display:none;">
                     <p>No movies yet.  Either you've cleared your list, or no new titles have been found recently.</p>
                     <small>To cleanup your movie data, click <a id="movie-cleanup" data-movie-action="cleanup" data-movie-id="0" href="#">here</a>.  If you want to start a new scan
                     <a data-admin="scan" class="admin" href="#">click here.</a></small>
                 </blockquote>
-
-                % endif
-
 
                 % for m in vb.movies:
                 <div class="row movie-row">
@@ -268,6 +265,16 @@
         $('.movie-action .btn').click(HandleMovieAction);
         $('#movie-cleanup').click(HandleMovieAction);
         $('#ignore-all-button').click(OnIgnoreAllClick);
+
+
+        if ($('.movie-row').length == 0)
+        {
+            $('#movie-blockquote').show();
+        }
+        else {
+            $('#movie-blockquote').hide();
+        }
+
     });
 
 
