@@ -153,13 +153,15 @@ class Movie(Base):
     source_format = Column(String)
 
     def get_name_and_year(self):
-        release_date_list = re.findall('[\(]?[0-9]{4}[\)]?', self.name)
-        # s = re.sub('[\(][0-9]{4}[\)]', '', self.name)
-        s = self.name.replace('(', '|').replace('Part', '|').replace('Season', '|')
-        s = s.split('|')[0].strip()
+        year_regex = '[\s(][1-2][0-9]{3}[\s)]'
+        release_date_list = re.findall(year_regex, self.name)
+
         if len(release_date_list) > 0:
-            release_date = release_date_list[0].replace('(', '').replace(')', '')
+            release_date = release_date_list[0].replace('(', '').replace(')', '').strip()
+            s = re.split(year_regex, self.name)[0]
         else:
+            s = self.name.replace('(', '|').replace('Part', '|').replace('Season', '|')
+            s = s.split('|')[0].strip()
             release_date = ''
 
         return s, release_date
