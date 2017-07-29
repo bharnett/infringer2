@@ -200,9 +200,13 @@ class ActionLog(Base):
         return '%s -- %s' % (self.time_stamp, self.message)
 
     @staticmethod
-    def log(msg):
+    def log(msg, db=None):
         # clean up the log file to keep it to the last 2000 records
-        s = connect()
+
+        if db is None:
+            s = connect()
+        else:
+            s = db
         l = ActionLog(time_stamp=datetime.datetime.now(), message=msg)
         s.add(l)
 

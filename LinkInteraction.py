@@ -20,7 +20,7 @@ def process_tv_link(db, config, episode, episode_links):
     episode.retrieved_on = datetime.date.today()
     episode.download_time = datetime.datetime.now()
     db.commit()
-    ActionLog.log('"%s\'s" .crawljob file created.' % str(episode))
+    ActionLog.log('"%s\'s" .crawljob file created.' % str(episode), db)
 
 
 def is_valid_links(episode_links, browser, episode):
@@ -157,7 +157,7 @@ def scan_movie_links(db, browser, source, config):
                     tmdb_movie = c.get_movie_details(search_details[0], search_details[1])
                     if tmdb_movie is None:
                         na_message = '"%s" not added.  Found at %s'% (movie.name, movie_link)
-                        ActionLog.log(na_message)
+                        ActionLog.log(na_message, db)
                         continue
                     else:
                         movie.tmdb_id = tmdb_movie.movie['id']
@@ -168,7 +168,7 @@ def scan_movie_links(db, browser, source, config):
                         movie.actors = ', '.join(tmdb_movie.cast)
                         movie.status = "Ready"
 
-                        ActionLog.log('"%s" added to downloadable movies' % movie.name)
+                        ActionLog.log('"%s" added to downloadable movies' % movie.name, db)
                 db.commit()
 
 

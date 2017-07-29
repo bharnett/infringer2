@@ -35,7 +35,7 @@ def search_sites(browser, db=None):
             ActionLog.log('%s could not logon' % source.login_page)
             continue
         else:
-            ActionLog.log('Scanning %s for the STATIC page %s.' % (source.domain, source.url))
+            ActionLog.log('Scanning %s for the STATIC page %s.' % (source.domain, source.url), db)
             # if you can login, start checking for content
             try:
                 soup = browser.get(source.url).soup
@@ -76,14 +76,14 @@ def search_forums(browser, db=None):
             ActionLog.log('%s could not logon' % source.login_page)
             continue
         else:
-            ActionLog.log('Searching via the search form on %s.' % source.domain)
+            ActionLog.log('Searching via the search form on %s.' % source.domain, db)
             # we invert the search format and check for each show, not each link in the page
 
         for s in search.shows_to_download:
-            ActionLog.log('Searching for %s.' % str(s))
+            ActionLog.log('Searching for %s.' % str(s), db)
             response_links = WebInteraction.source_search(source, str(s), browser)
             correct_links = [l for l in response_links if s.episode_in_link(l.text.lower())]
-            ActionLog.log('Found %s links for %s on %s' % (str(len(correct_links)), str(s), source.domain))
+            ActionLog.log('Found %s links for %s on %s' % (str(len(correct_links)), str(s), source.domain), db)
             search.process_search_result(correct_links, s, browser, source, config)
             time.sleep(15)  # wait five seconds between searches for warez-bb.org
 

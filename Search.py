@@ -36,7 +36,7 @@ class Search(object):
 
         self.db.commit()
 
-        ActionLog.log('Searching for: %s.' % all_tv)
+        ActionLog.log('Searching for: %s.' % all_tv, self.db)
 
         self.shows_to_download = list_of_shows
 
@@ -84,7 +84,7 @@ class Search(object):
     def open_links(self, browser, config, source):
         for episode in [s for s in self.shows_to_download if not s.is_downloaded]:
             if not episode.is_found:
-                ActionLog.log("%s not found in soup" % str(episode))
+                ActionLog.log("%s not found in soup" % str(episode), self.db)
                 continue
             else:
                 tv_response = browser.get(episode.url_download_source)
@@ -106,7 +106,7 @@ class Search(object):
             if individual_page.status_code == 200:
                 episode_soup = individual_page.soup
                 episode_links = LinkInteraction.get_download_links(episode_soup, config, source.domain)
-                ActionLog.log('%s found at %s.  Processing links...' % ((episode), l.get('href')))
+                ActionLog.log('%s found at %s.  Processing links...' % ((episode), l.get('href')), self.db)
 
                 if LinkInteraction.is_valid_links(episode_links, browser, episode):
 
@@ -117,7 +117,7 @@ class Search(object):
                     break
                 else:
                     episode.is_found = False
-                    ActionLog.log('%s had invalid or unavailable links at %s.' % ((episode), l.get('href')))
+                    ActionLog.log('%s had invalid or unavailable links at %s.' % ((episode), l.get('href')), self.db)
                     # previous section
 
 
