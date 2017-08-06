@@ -78,15 +78,18 @@ class Contentor(object):
         total_pages = pop['total_pages'] + 1
         popular_list = []
         if total_pages > 5:
-            total_pages = 5  # keep it under limit, we really don't need more than 40 pages of this stuff
+            total_pages = 10  # keep it under limit, we really don't need more than 40 pages of this stuff
 
         for i in range(2, total_pages):
             shows = pop['results']
+            time.sleep(8)
             for show in shows:
+                info = self.get_show(show['id'])
                 air_date = datetime.datetime.strptime(show['first_air_date'], '%Y-%m-%d')
                 if show['original_language'] == 'en' and \
-                                air_date >= datetime.datetime.now() + datetime.timedelta(weeks=-624):
-                    # add the show because it is in the future
+                                air_date >= datetime.datetime.now() + datetime.timedelta(weeks=-624) and \
+                                info['status'] not in ('Ended', 'Canceled'):
+                    # add the show because it is in the future and not ended shows
                     popular_list.append(show)
             pop = tv.popular(language='en-US', page=i)
 

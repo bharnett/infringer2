@@ -3,6 +3,7 @@ from Models import Show, Episode, Movie, Config, ActionLog, PremierShow, Popular
 import os
 import datetime
 import Models
+import time
 
 
 def add_show(show_id, db):
@@ -122,6 +123,7 @@ def update_episodes(tmdb_episodes, db_show, season, db, c=None):
 
     db.commit()
 
+
 def update_one(id, db, c=None):
     if c is None:
         c = TvdbInteraction.Contentor()
@@ -150,6 +152,7 @@ def update_show(id, show, db, c):
         if season_number == 0 or s['episode_count'] == 0:
             continue
         else:
+            time.sleep(5) # so we don't run into rate limits at TMDB
             season_detail = c.tmdb.TV_Seasons(series['id'], season_number).info()
             update_episodes(season_detail['episodes'], show, s, db, c)
 
