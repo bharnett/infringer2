@@ -27,7 +27,8 @@ def is_valid_links(episode_links, browser, episode):
     links_valid = True
     for file_share_link in episode_links:
         try:
-            if browser.get(file_share_link).status_code != 200:
+            test_response = browser.get(file_share_link)
+            if test_response.status_code != 200 or 'File not found' in str(test_response.soup):
                 ActionLog.log('Just kidding, "%s" had a bad link or links :(' % episode)
                 links_valid = False
                 break
