@@ -12,16 +12,21 @@ def add_show(show_id, db):
     # episodes = series.episodes()
     # artwork = c.get_show_images(show_id)
 
+
+
     new_show = Show(show_id=series['id'],
                     show_name=series['name'],
                     first_aired=datetime.datetime.strptime(series['first_air_date'], '%Y-%m-%d'),
                     is_active=series['status'] != 'Ended',
                     overview=series['overview'],
                     banner="",
-                    poster='https://image.tmdb.org/t/p/w185' + series['poster_path'],
+                    poster='static/tmdb-stacked.png' if series['poster_path'] is None else 'https://image.tmdb.org/t/p/w185' + series['poster_path'],
                     thumb="",
-                    background='https://image.tmdb.org/t/p/original' + series['backdrop_path'],
+                    background= '' if series['backdrop_path'] is None else 'https://image.tmdb.org/t/p/original' + series['backdrop_path'],
                     large_image='')
+
+    if new_show.background == '':
+        new_show.background = new_show.poster
 
     new_show.make_regex()
 
@@ -147,6 +152,14 @@ def update_all(database=None):
 
 def update_show(id, show, db, c):
     series = c.get_show(show.show_id)
+    if series['backdrop_path'] is not None:
+        show.background = 'https://image.tmdb.org/t/p/original' + series['backdrop_path']
+        db.commit()
+        
+    if series['poster_path'] is not None:
+        show.poster = 'https://image.tmdb.org/t/p/w185' + series['poster_path'],
+        db.commit()
+
     for s in series['seasons']:
         season_number = s['season_number']
         if season_number == 0 or s['episode_count'] == 0:
