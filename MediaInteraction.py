@@ -155,9 +155,9 @@ def update_show(id, show, db, c):
     if series['backdrop_path'] is not None:
         show.background = 'https://image.tmdb.org/t/p/original' + series['backdrop_path']
         db.commit()
-        
+
     if series['poster_path'] is not None:
-        show.poster = 'https://image.tmdb.org/t/p/w185' + series['poster_path'],
+        show.poster = 'https://image.tmdb.org/t/p/w185' + series['poster_path']
         db.commit()
 
     for s in series['seasons']:

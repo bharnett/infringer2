@@ -99,7 +99,6 @@ class Infringer(object):
 
             if action == 'refresh':
                 MediaInteraction.update_one(show_id, cherrypy.request.db)
-                Utils.add_episodes(show_id)
 
             if action == 'remove':
                 s = cherrypy.request.db.query(Show).filter(Show.show_id == show_id).first()
